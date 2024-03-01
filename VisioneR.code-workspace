@@ -1,10 +1,9 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
+    "folders": [
+        {
+            "path": "."
+        }
     ],
-
     "settings": {},
     "launch": {
         "version": "0.2.0",
@@ -19,7 +18,14 @@
                 "args": [],
                 "stopAtEntry": false,
                 "cwd": "${workspaceFolder}/install",
-                "preLaunchTask": "Install"
+                "preLaunchTask": "Install",
+                "setupCommands": [
+                    { // Display content in STL containers pretty
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ]
             }
         ],
         "compounds": []
@@ -46,7 +52,6 @@
                 },
                 "problemMatcher": []
             },
-
             // Cmake clean
             {
                 "label": "Clean",
@@ -64,7 +69,6 @@
                 },
                 "problemMatcher": []
             },
-
             // Install to workspace/install
             {
                 "label": "Install",
