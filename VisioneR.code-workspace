@@ -1,0 +1,94 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+    ],
+
+    "settings": {},
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            //debug
+            {
+                "name": "Debug",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/install/visioner",
+                "miDebuggerPath": "gdb",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/install",
+                "preLaunchTask": "Install"
+            }
+        ],
+        "compounds": []
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            // Cmake build
+            {
+                "label": "Build",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    "${workspaceFolder}/build",
+                    "--target",
+                    "all",
+                    "--config",
+                    "Release"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "problemMatcher": []
+            },
+
+            // Cmake clean
+            {
+                "label": "Clean",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "--build",
+                    "${workspaceFolder}/build",
+                    "--target",
+                    "clean"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "problemMatcher": []
+            },
+
+            // Install to workspace/install
+            {
+                "label": "Install",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "--install",
+                    "build",
+                    "--prefix",
+                    "${workspaceFolder}/install"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "options": {
+                    "env": {
+                        // "DESTDIR": "${workspaceFolder}/install2",
+                        // "CMAKE_INSTALL_PREFIX": "t",
+                    }
+                },
+                "problemMatcher": [],
+                "dependsOn": "Build"
+            }
+        ]
+    }
+}
