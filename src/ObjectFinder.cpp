@@ -5,9 +5,9 @@
 // #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp> // for homography
 
-#include "find_obj.hpp"
+#include "ObjectFinder.hpp"
 
-void FindObj::Find(cv::Mat objectImg, cv::Mat sceneImg)
+void ObjectFinder::Find(cv::Mat objectImg, cv::Mat sceneImg)
 {
     std::vector<cv::KeyPoint> objectKeypoints;
     std::vector<cv::KeyPoint> sceneKeypoints;
@@ -81,8 +81,8 @@ void FindObj::Find(cv::Mat objectImg, cv::Mat sceneImg)
     ////////////////////////////
     // Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
     float nndrRatio = 0.8;
-    std::vector<cv::Point2f> mpts_1, mpts_2; // Used for homography
-    std::vector<int> indexes_1, indexes_2;   // Used for homography
+    std::vector<cv::Point2f> src_points, dst_points; // Used for homography
+    std::vector<int> src_point_idxs, dst_point_idxs;   // Used for homography
     std::vector<uchar> outlier_mask;         // Used for homography
     for (unsigned int i = 0; i < objectData.rows; ++i)
     {
@@ -90,20 +90,20 @@ void FindObj::Find(cv::Mat objectImg, cv::Mat sceneImg)
         // Apply NNDR
         if (results.at<int>(i, 0) >= 0 && results.at<int>(i, 1) >= 0 && dists.at<float>(i, 0) <= nndrRatio * dists.at<float>(i, 1))
         {
-            mpts_1.push_back(objectKeypoints.at(i).pt);
-            indexes_1.push_back(i);
+            src_points.push_back(objectKeypoints.at(i).pt);
+            src_point_idxs.push_back(i);
 
-            mpts_2.push_back(sceneKeypoints.at(results.at<int>(i, 0)).pt);
-            indexes_2.push_back(results.at<int>(i, 0));
+            dst_points.push_back(sceneKeypoints.at(results.at<int>(i, 0)).pt);
+            dst_point_idxs.push_back(results.at<int>(i, 0));
         }
     }
 
     // FIND HOMOGRAPHY
     int nbMatches = 8;
-    if (mpts_1.size() >= nbMatches)
+    if (src_points.size() >= nbMatches)
     {
-        cv::Mat H = findHomography(mpts_1,
-                                   mpts_2,
+        cv::Mat H = findHomography(src_points,
+                                   dst_points,
                                    cv::RANSAC,
                                    1.0,
                                    outlier_mask);

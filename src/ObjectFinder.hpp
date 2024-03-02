@@ -11,7 +11,7 @@
 
 #include <opencv2/core/core.hpp>
 
-class FindObj {
+class ObjectFinder {
 public:
     static void Find(cv::Mat objectImg, cv::Mat sceneImg);
 
