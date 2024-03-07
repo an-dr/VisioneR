@@ -1,114 +1,102 @@
-#include <vector>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/features2d/features2d.hpp>
-// #include <opencv2/nonfree/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp> // for homography
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp> // for wrapPerspective
+#include <opencv2/opencv_modules.hpp>
+#include <stdio.h>
 
 #include "ObjectFinder.hpp"
 
-void ObjectFinder::Find(cv::Mat objectImg, cv::Mat sceneImg)
+using namespace cv;
+using namespace std;
+
+void ObjectFinder::Find()
 {
-    std::vector<cv::KeyPoint> objectKeypoints;
-    std::vector<cv::KeyPoint> sceneKeypoints;
-    cv::Mat objectDescriptors;
-    cv::Mat sceneDescriptors;
+    if (m_objectImg.empty() || m_sceneImg.empty())
+    {
+        printf("Error: empty images\n");
+        return;
+    }
 
-    // The detector can be any of (see OpenCV features2d.hpp):
-    // cv::FeatureDetector * detector = new cv::DenseFeatureDetector();
-    // cv::FeatureDetector * detector = new cv::FastFeatureDetector();
-    // cv::FeatureDetector * detector = new cv::GFTTDetector();
-    // cv::FeatureDetector * detector = new cv::MSER();
-    // cv::FeatureDetector * detector = new cv::ORB();
-    cv::FeatureDetector *detector = new cv::SIFT();
-    // cv::FeatureDetector * detector = new cv::StarFeatureDetector();
-    // cv::FeatureDetector * detector = new cv::SURF(600.0);
-    // cv::FeatureDetector * detector = new cv::BRISK();
-    detector->detect(objectImg, objectKeypoints);
-    detector->detect(sceneImg, sceneKeypoints);
-    delete detector;
+    DetectKeypoints("Object", m_objectImg, m_objectKeypoints);
+    ComputeDescriptors("Object", m_objectImg, m_objectKeypoints, m_objectDescriptors);
 
-    ////////////////////////////
-    // EXTRACT DESCRIPTORS
-    ////////////////////////////
+    DetectKeypoints("Scene", m_sceneImg, m_sceneKeypoints);
+    ComputeDescriptors("Scene", m_sceneImg, m_sceneKeypoints, m_sceneDescriptors);
+}
+
+bool ObjectFinder::LoadFromFiles(string objectImgPath,
+                                 string sceneImgPath)
+{
+    m_objectImg = imread(objectImgPath);
+    m_sceneImg = imread(sceneImgPath);
+    return true;
+}
+
+bool ObjectFinder::DetectKeypoints(std::string image_name,
+                                   Mat &img,
+                                   vector<KeyPoint> &keypoints,
+                                   bool show)
+{
+    Ptr<FeatureDetector> detector;
+#if CV_MAJOR_VERSION == 2
+    // detector = Ptr(new DenseFeatureDetector());
+    // detector = Ptr(new FastFeatureDetector());
+    // detector = Ptr(new GFTTDetector());
+    // detector = Ptr(new MSER());
+    // detector = Ptr(new ORB());
+    detector = Ptr<FeatureDetector>(new SIFT());
+    // detector = Ptr(new StarFeatureDetector());
+    // detector = Ptr(new SURF(600.0));
+    // detector = Ptr(new BRISK());
+#elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
+    detector = xfeatures2d::SIFT::create();
+#else // >= 4.3.0
+    detector = SIFT::create();
+#endif
+    detector->detect(img, keypoints);
+    printf("[%s] %d keypoints detected\n", image_name.c_str(),
+           (int)keypoints.size());
+
+    if (show)
+    {
+        // Draw keypoints
+        Mat img_keypoints = img.clone();
+        drawKeypoints(img_keypoints, keypoints, img_keypoints, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        // show
+        imshow("Keypoints", img_keypoints);
+        waitKey(500);
+    }
+    return true;
+}
+
+bool ObjectFinder::ComputeDescriptors(std::string image_name, cv::Mat &img, std::vector<cv::KeyPoint> &keypoints, cv::Mat &descriptors, bool show)
+{
+    if (keypoints.size() == 0)
+    {
+        printf("[%s] Error: no keypoints\n", image_name.c_str());
+        return false;
+    }
+
+    cv::Ptr<cv::DescriptorExtractor> extractor;
+#if CV_MAJOR_VERSION == 2
     // The extractor can be any of (see OpenCV features2d.hpp):
-    // cv::DescriptorExtractor * extractor = new cv::BriefDescriptorExtractor();
-    // cv::DescriptorExtractor * extractor = new cv::ORB();
-    cv::DescriptorExtractor *extractor = new cv::SIFT();
-    // cv::DescriptorExtractor * extractor = new cv::SURF(600.0);
-    // cv::DescriptorExtractor * extractor = new cv::BRISK();
-    // cv::DescriptorExtractor * extractor = new cv::FREAK();
-    extractor->compute(objectImg, objectKeypoints, objectDescriptors);
-    extractor->compute(sceneImg, sceneKeypoints, sceneDescriptors);
-    delete extractor;
-
-    ////////////////////////////
-    // NEAREST NEIGHBOR MATCHING USING FLANN LIBRARY (included in OpenCV)
-    ////////////////////////////
-    cv::Mat results;
-    cv::Mat dists;
-    int k = 2; // find the 2 nearest neighbors
-    if (objectDescriptors.type() == CV_8U)
-    {
-        // Binary descriptors detected (from ORB or Brief)
-
-        // Create Flann LSH index
-        cv::flann::Index flannIndex(sceneDescriptors, cv::flann::LshIndexParams(12, 20, 2), cvflann::FLANN_DIST_HAMMING);
-
-        // search (nearest neighbor)
-        flannIndex.knnSearch(objectDescriptors, results, dists, k, cv::flann::SearchParams());
-    }
-    else
-    {
-        // assume it is CV_32F
-        // Create Flann KDTree index
-        cv::flann::Index flannIndex(sceneDescriptors, cv::flann::KDTreeIndexParams(), cvflann::FLANN_DIST_EUCLIDEAN);
-
-        // search (nearest neighbor)
-        flannIndex.knnSearch(objectDescriptors, results, dists, k, cv::flann::SearchParams());
-    }
-
-    // Conversion to CV_32F if needed
-    if (dists.type() == CV_32S)
-    {
-        cv::Mat temp;
-        dists.convertTo(temp, CV_32F);
-        dists = temp;
-    }
-
-    ////////////////////////////
-    // PROCESS NEAREST NEIGHBOR RESULTS
-    ////////////////////////////
-    // Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
-    float nndrRatio = 0.8;
-    std::vector<cv::Point2f> src_points, dst_points; // Used for homography
-    std::vector<int> src_point_idxs, dst_point_idxs;   // Used for homography
-    std::vector<uchar> outlier_mask;         // Used for homography
-    for (unsigned int i = 0; i < objectData.rows; ++i)
-    {
-        // Check if this descriptor matches with those of the objects
-        // Apply NNDR
-        if (results.at<int>(i, 0) >= 0 && results.at<int>(i, 1) >= 0 && dists.at<float>(i, 0) <= nndrRatio * dists.at<float>(i, 1))
-        {
-            src_points.push_back(objectKeypoints.at(i).pt);
-            src_point_idxs.push_back(i);
-
-            dst_points.push_back(sceneKeypoints.at(results.at<int>(i, 0)).pt);
-            dst_point_idxs.push_back(results.at<int>(i, 0));
-        }
-    }
-
-    // FIND HOMOGRAPHY
-    int nbMatches = 8;
-    if (src_points.size() >= nbMatches)
-    {
-        cv::Mat H = findHomography(src_points,
-                                   dst_points,
-                                   cv::RANSAC,
-                                   1.0,
-                                   outlier_mask);
-        // Do what you want with the homography (like showing a rectangle)
-        // The "outlier_mask" contains a mask representing the inliers and outliers.
-        // ...
-    }
+    // extractor = cv::Ptr(new cv::BriefDescriptorExtractor());
+    // extractor = cv::Ptr(new cv::ORB());
+    extractor = cv::Ptr<cv::DescriptorExtractor>(new cv::SIFT());
+    // extractor = cv::Ptr(new cv::SURF(600.0));
+    // extractor = cv::Ptr(new cv::BRISK());
+    // extractor = cv::Ptr(new cv::FREAK());
+#elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
+    extractor = cv::xfeatures2d::SIFT::create();
+#else // >= 4.3.0
+    extractor = cv::SIFT::create();
+#endif
+    extractor->compute(img, keypoints, descriptors);
+    printf("[%s] %d descriptors extracted\n",
+           image_name.c_str(),
+           descriptors.rows);
+    return true;
 }

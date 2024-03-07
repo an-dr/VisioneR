@@ -1,32 +1,23 @@
 // https://docs.opencv.org/3.4/d7/dff/tutorial_feature_homography.html
 
-#include <opencv2/highgui.hpp>
-#include <stdio.h>
-// time std
-
-// Qt stuff
-#include <QtCore/QElapsedTimer>
-#include <QtCore/QTimer>
-#include <QApplication>
-#include <QGraphicsRectItem>
-#include <QPen>
-#include <QColor>
-
-// OpenCV stuff
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/features2d/features2d.hpp>
 #include <opencv2/calib3d/calib3d.hpp> // for homography
-#include <opencv2/imgproc.hpp>         // for wrapPerspective
-
+#include <opencv2/core/core.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp> // for wrapPerspective
 #include <opencv2/opencv_modules.hpp>
+#include <stdio.h>
+
+#include "ObjectFinder.hpp"
 
 using namespace cv;
 
 void GetImages(cv::Mat &img_scene, cv::Mat &img_obj)
 {
-    // img_scene = imread("img_scene.jpg", cv::IMREAD_GRAYSCALE);
-    img_scene = imread("img_scene_obj.jpg");
+    img_scene = imread("img_scene.jpg");
+    // img_scene = imread("img_scene_many.jpg");
+    // img_scene = imread("img_scene_obj.jpg");
     img_obj = imread("img_obj.jpg");
 }
 
@@ -167,7 +158,7 @@ void ProcessNearestNeighborResults(std::vector<cv::KeyPoint> &objectKeypoints,
                                    bool useBFMatcher = false)
 {
     // Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
-    float nndrRatio = 0.8f;
+    float nndrRatio = 0.6f;
     // Check if this descriptor matches with those of the objects
     if (!useBFMatcher)
     {
@@ -240,72 +231,8 @@ void FindHomography(std::vector<cv::Point2f> &src_points,
     }
 }
 
-int main(int argc, char **argv)
+void GetResult(Mat &objectImg, Mat &sceneImg, cv::Mat &H)
 {
-
-    // create a gui window:
-    //  namedWindow("VisioneR",1);
-
-    // initialize a 120X350 matrix of black pixels:
-    //  Mat output = Mat::zeros( 120, 350, CV_8UC3 );
-    Mat sceneImg, objectImg;
-    GetImages(sceneImg, objectImg);
-
-    QElapsedTimer time;
-
-    // GUI stuff
-    QApplication app(argc, argv);
-
-    time.start();
-
-    printf("Loading images: %lld ms\n", time.restart());
-
-    ////////////////////////////
-    // EXTRACT KEYPOINTS
-    ////////////////////////////
-    std::vector<cv::KeyPoint> objectKeypoints;
-    std::vector<cv::KeyPoint> sceneKeypoints;
-    GetKeyPoints(objectImg, objectKeypoints, false);
-    GetKeyPoints(sceneImg, sceneKeypoints, false);
-
-    ////////////////////////////
-    // EXTRACT DESCRIPTORS
-    ////////////////////////////
-    cv::Mat objectDescriptors;
-    cv::Mat sceneDescriptors;
-    GetDescriptors(objectImg, objectKeypoints, objectDescriptors);
-    GetDescriptors(sceneImg, sceneKeypoints, sceneDescriptors);
-
-    ////////////////////////////
-    // NEAREST NEIGHBOR MATCHING USING FLANN LIBRARY (included in OpenCV)
-    ////////////////////////////
-    cv::Mat results;
-    cv::Mat dists;
-    std::vector<std::vector<cv::DMatch>> matches;
-    bool useBFMatcher = false; // SET TO TRUE TO USE BRUTE FORCE MATCHER
-    FindMatches(objectDescriptors, sceneDescriptors, results, dists, matches, useBFMatcher);
-
-    // DrawMatches(objectImg, objectKeypoints, sceneImg, sceneKeypoints, matches);
-
-    ////////////////////////////
-    // PROCESS NEAREST NEIGHBOR RESULTS
-    ////////////////////////////
-    std::vector<cv::Point2f> src_points, dst_points; // Used for homography
-    std::vector<int> src_point_idxs, dst_point_idxs; // Used for homography
-    std::vector<uchar> outlier_mask;                 // Used for homography
-    ProcessNearestNeighborResults(objectKeypoints,
-                                  sceneKeypoints,
-                                  objectDescriptors,
-                                  results, dists,
-                                  matches,
-                                  src_points, dst_points,
-                                  src_point_idxs, dst_point_idxs,
-                                  outlier_mask, useBFMatcher);
-
-    // FIND HOMOGRAPHY
-    cv::Mat H;
-    FindHomography(src_points, dst_points, outlier_mask, H);
-
     //-- Get the corners from the image_1 ( the object to be "detected" )
     std::vector<Point2f> obj_corners(4);
     obj_corners[0] = Point2f(0, 0);
@@ -325,103 +252,67 @@ int main(int argc, char **argv)
 
     imshow("Result", sceneImg);
     waitKey(0);
-    // unsigned int minInliers = 8;
-    // if (src_points.size() >= minInliers)
-    // {
-    //     time.start();
-    //     cv::Mat H = findHomography(src_points,
-    //                                dst_points,
-    //                                cv::RANSAC,
-    //                                1.0,
-    //                                outlier_mask);
+}
 
-    //     printf("Time finding homography = %lld ms\n", time.restart());
+void proto1()
+{
+    printf("Loading images\n");
+    Mat sceneImg, objectImg;
+    GetImages(sceneImg, objectImg);
 
-    //     // // Show image
-    //     // // get image size
-    //     // // cv::Size size = objectImg.size();
-    //     // cv::warpPerspective(objectImg, objectImg, H, objectImg.size());
-    //     // cv::imshow("Image", objectImg);
-    //     // cv::waitKey(0);
+    // EXTRACT KEYPOINTS
+    std::vector<cv::KeyPoint> objectKeypoints;
+    std::vector<cv::KeyPoint> sceneKeypoints;
+    GetKeyPoints(objectImg, objectKeypoints, false);
+    GetKeyPoints(sceneImg, sceneKeypoints, false);
 
-    //     int inliers = 0, outliers = 0;
-    //     for (unsigned int k = 0; k < src_points.size(); ++k)
-    //     {
-    //         if (outlier_mask.at(k))
-    //         {
-    //             ++inliers;
-    //         }
-    //         else
-    //         {
-    //             ++outliers;
-    //         }
-    //     }
-    //     QTransform hTransform(
-    //         H.at<double>(0, 0), H.at<double>(1, 0), H.at<double>(2, 0),
-    //         H.at<double>(0, 1), H.at<double>(1, 1), H.at<double>(2, 1),
-    //         H.at<double>(0, 2), H.at<double>(1, 2), H.at<double>(2, 2));
+    // EXTRACT DESCRIPTORS
+    cv::Mat objectDescriptors;
+    cv::Mat sceneDescriptors;
+    GetDescriptors(objectImg, objectKeypoints, objectDescriptors);
+    GetDescriptors(sceneImg, sceneKeypoints, sceneDescriptors);
 
-    //     // GUI : Change color and add homography rectangle
-    //     QColor color(Qt::green);
-    //     int alpha = 130;
-    //     color.setAlpha(alpha);
-    //     for (unsigned int k = 0; k < src_points.size(); ++k)
-    //     {
-    //         // if(outlier_mask.at(k))
-    //         // {
-    //         // 	objWidget.setKptColor(src_point_idxs.at(k), color);
-    //         // 	sceneWidget.setKptColor(dst_point_idxs.at(k), color);
-    //         // }
-    //         // else
-    //         // {
-    //         // 	objWidget.setKptColor(src_point_idxs.at(k), QColor(255,0,0,alpha));
-    //         // 	sceneWidget.setKptColor(dst_point_idxs.at(k), QColor(255,0,0,alpha));
-    //         // }
-    //     }
-    //     QPen rectPen(color);
-    //     rectPen.setWidth(4);
+    // NEAREST NEIGHBOR MATCHING USING FLANN LIBRARY (included in OpenCV)
+    cv::Mat results;
+    cv::Mat dists;
+    std::vector<std::vector<cv::DMatch>> matches;
+    bool useBFMatcher = false; // SET TO TRUE TO USE BRUTE FORCE MATCHER
+    FindMatches(objectDescriptors, sceneDescriptors, results, dists, matches, useBFMatcher);
+    // DrawMatches(objectImg, objectKeypoints, sceneImg, sceneKeypoints, matches);
 
-    //     // QGraphicsRectItem * rectItem = new QGraphicsRectItem(objWidget.pixmap().rect());
-    //     // rectItem->setPen(rectPen);
-    //     // rectItem->setTransform(hTransform);
-    //     // sceneWidget.addRect(rectItem);
-    //     printf("Inliers=%d Outliers=%d\n", inliers, outliers);
-    // }
-    // else
-    // {
-    //     printf("Not enough matches (%d) for homography...\n", (int)src_points.size());
-    // }
+    // PROCESS NEAREST NEIGHBOR RESULTS
+    std::vector<cv::Point2f> src_points, dst_points; // Used for homography
+    std::vector<int> src_point_idxs, dst_point_idxs; // Used for homography
+    std::vector<uchar> outlier_mask;                 // Used for homography
+    ProcessNearestNeighborResults(objectKeypoints,
+                                  sceneKeypoints,
+                                  objectDescriptors,
+                                  results, dists,
+                                  matches,
+                                  src_points, dst_points,
+                                  src_point_idxs, dst_point_idxs,
+                                  outlier_mask, useBFMatcher);
 
-    // // Wait for gui
-    // objWidget.setGraphicsViewMode(false);
-    // objWidget.setWindowTitle("Object");
-    // if(objWidget.pixmap().width() <= 800)
-    // {
-    // 	objWidget.setMinimumSize(objWidget.pixmap().width(), objWidget.pixmap().height());
-    // }
-    // else
-    // {
-    // 	objWidget.setMinimumSize(800, 600);
-    // 	objWidget.setAutoScale(false);
-    // }
+    // FIND HOMOGRAPHY
+    cv::Mat H;
+    FindHomography(src_points, dst_points, outlier_mask, H);
 
-    // sceneWidget.setGraphicsViewMode(false);
-    // sceneWidget.setWindowTitle("Scene");
-    // if(sceneWidget.pixmap().width() <= 800)
-    // {
-    // 	sceneWidget.setMinimumSize(sceneWidget.pixmap().width(), sceneWidget.pixmap().height());
-    // }
-    // else
-    // {
-    // 	sceneWidget.setMinimumSize(800, 600);
-    // 	sceneWidget.setAutoScale(false);
-    // }
-
-    // sceneWidget.show();
-    // objWidget.show();
-
-    // int r = app.exec();
+    // Get the result
+    GetResult(objectImg, sceneImg, H);
     printf("Closing...\n");
+}
 
+void proto2()
+{
+    ObjectFinder of;
+    of.LoadFromFiles("img_obj.jpg", "img_scene.jpg");
+    of.Find();
+
+}
+
+int main(int argc, char **argv)
+{
+    // proto1();
+    proto2();
     return 0;
 }
