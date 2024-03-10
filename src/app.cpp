@@ -12,15 +12,19 @@
 
 void proto2()
 {
+    cv::Mat objectImg = cv::imread("img_obj.jpg");
+    cv::Mat sceneImg = cv::imread("img_scene_many.jpg");
+
     ObjectFinder of;
-    // of.LoadFromFiles("img_obj.jpg", "img_scene.jpg");
-    of.LoadFromFiles("img_obj.jpg", "img_scene_many.jpg");
-    of.Find();
+    of.SetScene(sceneImg);
+
+    cv::Point2f result;
+    of.Find(objectImg, result);
+    printf("Result: %f %f\n", result.x, result.y);
 }
 
 int main(int argc, char **argv)
 {
-    // proto1();
     proto2();
     return 0;
 }

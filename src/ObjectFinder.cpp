@@ -1,3 +1,15 @@
+// *************************************************************************
+//
+// Copyright (c) 2024 Andrei Gramakov. All rights reserved.
+//
+// This file is licensed under the terms of the MIT license.
+// For a copy, see: https://opensource.org/licenses/MIT
+//
+// site:    https://agramakov.me
+// e-mail:  mail@agramakov.me
+//
+// *************************************************************************
+
 #include <opencv2/calib3d/calib3d.hpp> // for homography
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
@@ -12,8 +24,9 @@
 using namespace cv;
 using namespace std;
 
-void ObjectFinder::Find()
+void ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
 {
+    m_objectImg = objectImg;
     if (m_objectImg.empty() || m_sceneImg.empty())
     {
         printf("Error: empty images\n");
@@ -46,19 +59,16 @@ void ObjectFinder::Find()
     FindHomography(src_points, dst_points, outlier_mask, H);
 
     // Get result
-    Point2f center;
-    GetResult(m_objectImg, m_sceneImg, H, center);
+    GetResult(m_objectImg, m_sceneImg, H, out_result);
     printf("Closing...\n");
-
 }
 
-bool ObjectFinder::LoadFromFiles(string objectImgPath,
-                                 string sceneImgPath)
+bool ObjectFinder::SetScene(cv::Mat &sceneImg)
 {
-    m_objectImg = imread(objectImgPath);
-    m_sceneImg = imread(sceneImgPath);
+    m_sceneImg = sceneImg;
     return true;
 }
+
 
 bool ObjectFinder::DetectKeypoints(string image_name,
                                    Mat &img,
@@ -237,6 +247,8 @@ bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
                                   Mat &H,
                                   unsigned int minInliers)
 {
+    bool result = false;
+
     if (src_points.size() >= minInliers)
     {
         H = findHomography(src_points,
@@ -258,14 +270,14 @@ bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
             }
         }
         printf("Inliers=%d Outliers=%d\n", inliers, outliers);
+        result = true;
     }
     else
     {
         printf("Not enough matches (%d) for homography...\n", (int)src_points.size());
     }
+    return result;
 }
-
-
 
 bool ObjectFinder::GetResult(cv::Mat &objectImg,
                              cv::Mat &sceneImg,
@@ -292,8 +304,8 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
 
     // Center
     bool result = CalculateLinesIntersection(scene_corners[0], scene_corners[2],
-                               scene_corners[1], scene_corners[3],
-                               out_center);
+                                             scene_corners[1], scene_corners[3],
+                                             out_center);
     if (!result)
     {
         printf("Error: cannot calculate center\n");
@@ -326,5 +338,4 @@ bool ObjectFinder::CalculateLinesIntersection(cv::Point2f &p1, cv::Point2f &p2, 
     r.x = (b2 - b1) / (a1 - a2);
     r.y = a1 * r.x + b1;
     return true;
-
 }
