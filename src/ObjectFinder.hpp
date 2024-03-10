@@ -56,7 +56,14 @@ private:
 
     bool GetResult(cv::Mat &objectImg,
                    cv::Mat &sceneImg,
-                   cv::Mat &H);
+                   cv::Mat &H,
+                   cv::Point2f &out_center);
+
+    static bool CalculateLinesIntersection(cv::Point2f &p1,
+                                           cv::Point2f &p2,
+                                           cv::Point2f &p3,
+                                           cv::Point2f &p4,
+                                           cv::Point2f &r);
 
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;

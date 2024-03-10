@@ -46,7 +46,8 @@ void ObjectFinder::Find()
     FindHomography(src_points, dst_points, outlier_mask, H);
 
     // Get result
-    GetResult(m_objectImg, m_sceneImg, H);
+    Point2f center;
+    GetResult(m_objectImg, m_sceneImg, H, center);
     printf("Closing...\n");
 
 }
@@ -264,9 +265,12 @@ bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
     }
 }
 
+
+
 bool ObjectFinder::GetResult(cv::Mat &objectImg,
                              cv::Mat &sceneImg,
-                             cv::Mat &H)
+                             cv::Mat &H,
+                             cv::Point2f &out_center)
 {
     //-- Get the corners from the image_1 ( the object to be "detected" )
     std::vector<Point2f> obj_corners(4);
@@ -282,10 +286,45 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
     line(sceneImg, scene_corners[1], scene_corners[2], Scalar(0, 255, 0), 4);
     line(sceneImg, scene_corners[2], scene_corners[3], Scalar(0, 255, 0), 4);
     line(sceneImg, scene_corners[3], scene_corners[0], Scalar(0, 255, 0), 4);
+    // Cross
     line(sceneImg, scene_corners[0], scene_corners[2], Scalar(0, 255, 0), 4);
     line(sceneImg, scene_corners[3], scene_corners[1], Scalar(0, 255, 0), 4);
 
+    // Center
+    bool result = CalculateLinesIntersection(scene_corners[0], scene_corners[2],
+                               scene_corners[1], scene_corners[3],
+                               out_center);
+    if (!result)
+    {
+        printf("Error: cannot calculate center\n");
+        return false;
+    }
+
+    printf("Center: (%.2f, %.2f)\n", out_center.x, out_center.y);
     imshow("Result", sceneImg);
     waitKey(0);
     return true;
+}
+
+bool ObjectFinder::CalculateLinesIntersection(cv::Point2f &p1, cv::Point2f &p2, cv::Point2f &p3, cv::Point2f &p4, cv::Point2f &r)
+{
+    float x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
+    float x3 = p3.x, y3 = p3.y, x4 = p4.x, y4 = p4.y;
+
+    // Solving using y = ax + b for two lines
+    float a1 = (y2 - y1) / (x2 - x1);
+    float b1 = y1 - a1 * x1;
+    float a2 = (y4 - y3) / (x4 - x3);
+    float b2 = y3 - a2 * x3;
+
+    if (a1 == a2)
+    {
+        printf("Error: parallel lines\n");
+        return false;
+    }
+
+    r.x = (b2 - b1) / (a1 - a2);
+    r.y = a1 * r.x + b1;
+    return true;
+
 }
