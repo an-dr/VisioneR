@@ -22,7 +22,6 @@ public:
                        std::string sceneImgPath);
 
 private:
-
     bool DetectKeypoints(std::string image_name,
                          cv::Mat &img,
                          std::vector<cv::KeyPoint> &keypoints,
@@ -38,8 +37,26 @@ private:
                           cv::Mat &dists,
                           std::vector<std::vector<cv::DMatch>> &matches,
                           bool useBFMatcher = false);
-    bool FindHomography();
-    bool DrawMatches();
+
+    bool FindGoodMatches(cv::Mat &results,
+                         cv::Mat &dists,
+                         std::vector<std::vector<cv::DMatch>> &matches,
+                         std::vector<cv::Point2f> &src_points,
+                         std::vector<cv::Point2f> &dst_points,
+                         std::vector<int> &src_point_idxs,
+                         std::vector<int> &dst_point_idxs,
+                         std::vector<uchar> &outlier_mask,
+                         bool useBFMatcher = false);
+
+    bool FindHomography(std::vector<cv::Point2f> &src_points,
+                        std::vector<cv::Point2f> &dst_points,
+                        std::vector<uchar> &outlier_mask,
+                        cv::Mat &H,
+                        unsigned int minInliers = 8);
+
+    bool GetResult(cv::Mat &objectImg,
+                   cv::Mat &sceneImg,
+                   cv::Mat &H);
 
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;

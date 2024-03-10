@@ -25,6 +25,30 @@ void ObjectFinder::Find()
 
     DetectKeypoints("Scene", m_sceneImg, m_sceneKeypoints);
     ComputeDescriptors("Scene", m_sceneImg, m_sceneKeypoints, m_sceneDescriptors);
+
+    bool useBFMatcher = true;
+
+    // Match descriptors
+    Mat results, dists;
+    vector<vector<DMatch>> matches;
+    MatchDescriptors(results, dists, matches, useBFMatcher);
+
+    // Find good matches
+    vector<Point2f> src_points, dst_points;
+    vector<int> src_point_idxs, dst_point_idxs;
+    vector<uchar> outlier_mask;
+    FindGoodMatches(results, dists, matches,
+                    src_points, dst_points, src_point_idxs, dst_point_idxs,
+                    outlier_mask, useBFMatcher);
+
+    // Find homography
+    Mat H;
+    FindHomography(src_points, dst_points, outlier_mask, H);
+
+    // Get result
+    GetResult(m_objectImg, m_sceneImg, H);
+    printf("Closing...\n");
+
 }
 
 bool ObjectFinder::LoadFromFiles(string objectImgPath,
@@ -35,7 +59,7 @@ bool ObjectFinder::LoadFromFiles(string objectImgPath,
     return true;
 }
 
-bool ObjectFinder::DetectKeypoints(std::string image_name,
+bool ObjectFinder::DetectKeypoints(string image_name,
                                    Mat &img,
                                    vector<KeyPoint> &keypoints,
                                    bool show)
@@ -72,7 +96,7 @@ bool ObjectFinder::DetectKeypoints(std::string image_name,
     return true;
 }
 
-bool ObjectFinder::ComputeDescriptors(std::string image_name, cv::Mat &img, std::vector<cv::KeyPoint> &keypoints, cv::Mat &descriptors, bool show)
+bool ObjectFinder::ComputeDescriptors(string image_name, Mat &img, vector<KeyPoint> &keypoints, Mat &descriptors, bool show)
 {
     if (keypoints.size() == 0)
     {
@@ -80,23 +104,188 @@ bool ObjectFinder::ComputeDescriptors(std::string image_name, cv::Mat &img, std:
         return false;
     }
 
-    cv::Ptr<cv::DescriptorExtractor> extractor;
+    Ptr<DescriptorExtractor> extractor;
 #if CV_MAJOR_VERSION == 2
     // The extractor can be any of (see OpenCV features2d.hpp):
-    // extractor = cv::Ptr(new cv::BriefDescriptorExtractor());
-    // extractor = cv::Ptr(new cv::ORB());
-    extractor = cv::Ptr<cv::DescriptorExtractor>(new cv::SIFT());
-    // extractor = cv::Ptr(new cv::SURF(600.0));
-    // extractor = cv::Ptr(new cv::BRISK());
-    // extractor = cv::Ptr(new cv::FREAK());
+    // extractor = Ptr(new BriefDescriptorExtractor());
+    // extractor = Ptr(new ORB());
+    extractor = Ptr<DescriptorExtractor>(new SIFT());
+    // extractor = Ptr(new SURF(600.0));
+    // extractor = Ptr(new BRISK());
+    // extractor = Ptr(new FREAK());
 #elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
-    extractor = cv::xfeatures2d::SIFT::create();
+    extractor = xfeatures2d::SIFT::create();
 #else // >= 4.3.0
-    extractor = cv::SIFT::create();
+    extractor = SIFT::create();
 #endif
     extractor->compute(img, keypoints, descriptors);
     printf("[%s] %d descriptors extracted\n",
            image_name.c_str(),
            descriptors.rows);
+    return true;
+}
+
+bool ObjectFinder::MatchDescriptors(Mat &results, Mat &dists, vector<vector<DMatch>> &matches, bool useBFMatcher)
+{
+    int k = 2; // find the 2 nearest neighbors
+    if (m_objectDescriptors.type() == CV_8U)
+    {
+        // Binary descriptors detected (from ORB, Brief, BRISK, FREAK)
+        printf("Binary descriptors detected...\n");
+        if (useBFMatcher)
+        {
+            BFMatcher matcher(NORM_HAMMING); // use NORM_HAMMING2 for ORB descriptor with WTA_K == 3 or 4 (see ORB constructor)
+            matcher.knnMatch(m_objectDescriptors, m_sceneDescriptors, matches, k);
+        }
+        else
+        {
+            // Create Flann LSH index
+            flann::Index flannIndex(m_sceneDescriptors, flann::LshIndexParams(12, 20, 2), cvflann::FLANN_DIST_HAMMING);
+            printf("Creating FLANN LSH index is done\n");
+
+            // search (nearest neighbor)
+            flannIndex.knnSearch(m_objectDescriptors, results, dists, k, flann::SearchParams());
+        }
+    }
+    else
+    {
+        // assume it is CV_32F
+        printf("Float descriptors detected...\n");
+        if (useBFMatcher)
+        {
+            BFMatcher matcher(NORM_L2);
+            matcher.knnMatch(m_objectDescriptors, m_sceneDescriptors, matches, k);
+        }
+        else
+        {
+            // Create Flann KDTree index
+            flann::Index flannIndex(m_sceneDescriptors, flann::KDTreeIndexParams(), cvflann::FLANN_DIST_EUCLIDEAN);
+            // printf("Time creating FLANN KDTree index = %lld ms\n", 0LL);
+
+            // search (nearest neighbor)
+            flannIndex.knnSearch(m_objectDescriptors, results, dists, k, flann::SearchParams());
+        }
+    }
+    // printf("Time nearest neighbor search = %lld ms\n", 0LL);
+
+    // Conversion to CV_32F if needed
+    if (dists.type() == CV_32S)
+    {
+        Mat temp;
+        dists.convertTo(temp, CV_32F);
+        dists = temp;
+    }
+    return true;
+}
+
+bool ObjectFinder::FindGoodMatches(Mat &results,
+                                   Mat &dists,
+                                   vector<vector<DMatch>> &matches,
+                                   vector<Point2f> &src_points,
+                                   vector<Point2f> &dst_points,
+                                   vector<int> &src_point_idxs,
+                                   vector<int> &dst_point_idxs,
+                                   vector<uchar> &outlier_mask,
+                                   bool useBFMatcher)
+{
+    // Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
+    float nndrRatio = 0.8f;
+    // Check if this descriptor matches with those of the objects
+    if (!useBFMatcher)
+    {
+        for (int i = 0; i < m_objectDescriptors.rows; ++i)
+        {
+            // Apply NNDR
+            // printf("q=%d dist1=%f dist2=%f\n", i, dists.at<float>(i,0), dists.at<float>(i,1));
+            if (results.at<int>(i, 0) >= 0 &&
+                results.at<int>(i, 1) >= 0 &&
+                dists.at<float>(i, 0) <= nndrRatio * dists.at<float>(i, 1))
+            {
+                src_points.push_back(m_objectKeypoints.at(i).pt);
+                src_point_idxs.push_back(i);
+
+                dst_points.push_back(m_sceneKeypoints.at(results.at<int>(i, 0)).pt);
+                dst_point_idxs.push_back(results.at<int>(i, 0));
+            }
+        }
+    }
+    else
+    {
+        for (unsigned int i = 0; i < matches.size(); ++i)
+        {
+            // Apply NNDR
+            // printf("q=%d dist1=%f dist2=%f\n", matches.at(i).at(0).queryIdx, matches.at(i).at(0).distance, matches.at(i).at(1).distance);
+            if (matches.at(i).size() == 2 &&
+                matches.at(i).at(0).distance <= nndrRatio * matches.at(i).at(1).distance)
+            {
+                src_points.push_back(m_objectKeypoints.at(matches.at(i).at(0).queryIdx).pt);
+                src_point_idxs.push_back(matches.at(i).at(0).queryIdx);
+
+                dst_points.push_back(m_sceneKeypoints.at(matches.at(i).at(0).trainIdx).pt);
+                dst_point_idxs.push_back(matches.at(i).at(0).trainIdx);
+            }
+        }
+    }
+    printf("%d good matches found\n", (int)src_points.size());
+    return true;
+}
+
+bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
+                                  vector<Point2f> &dst_points,
+                                  vector<uchar> &outlier_mask,
+                                  Mat &H,
+                                  unsigned int minInliers)
+{
+    if (src_points.size() >= minInliers)
+    {
+        H = findHomography(src_points,
+                           dst_points,
+                           RANSAC,
+                           1.0,
+                           outlier_mask);
+
+        int inliers = 0, outliers = 0;
+        for (unsigned int k = 0; k < src_points.size(); ++k)
+        {
+            if (outlier_mask.at(k))
+            {
+                ++inliers;
+            }
+            else
+            {
+                ++outliers;
+            }
+        }
+        printf("Inliers=%d Outliers=%d\n", inliers, outliers);
+    }
+    else
+    {
+        printf("Not enough matches (%d) for homography...\n", (int)src_points.size());
+    }
+}
+
+bool ObjectFinder::GetResult(cv::Mat &objectImg,
+                             cv::Mat &sceneImg,
+                             cv::Mat &H)
+{
+    //-- Get the corners from the image_1 ( the object to be "detected" )
+    std::vector<Point2f> obj_corners(4);
+    obj_corners[0] = Point2f(0, 0);
+    obj_corners[1] = Point2f((float)objectImg.cols, 0);
+    obj_corners[2] = Point2f((float)objectImg.cols, (float)objectImg.rows);
+    obj_corners[3] = Point2f(0, (float)objectImg.rows);
+    std::vector<Point2f> scene_corners(4);
+    perspectiveTransform(obj_corners, scene_corners, H);
+
+    //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+    line(sceneImg, scene_corners[0], scene_corners[1], Scalar(0, 255, 0), 4);
+    line(sceneImg, scene_corners[1], scene_corners[2], Scalar(0, 255, 0), 4);
+    line(sceneImg, scene_corners[2], scene_corners[3], Scalar(0, 255, 0), 4);
+    line(sceneImg, scene_corners[3], scene_corners[0], Scalar(0, 255, 0), 4);
+    line(sceneImg, scene_corners[0], scene_corners[2], Scalar(0, 255, 0), 4);
+    line(sceneImg, scene_corners[3], scene_corners[1], Scalar(0, 255, 0), 4);
+
+    imshow("Result", sceneImg);
+    waitKey(0);
     return true;
 }
