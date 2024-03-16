@@ -8,8 +8,9 @@
 // *************************************************************************
 
 #include <map>
-#include <string>
 #include <opencv2/core/core.hpp>
+#include <stdint.h>
+#include <string>
 
 class Face
 {
@@ -38,7 +39,9 @@ public:
     void ShowDunno(int delay = 500);
 
 private:
+    static const int WAIT_DELTA = 100;
     void Wait(int delay);
+    uint64_t GetTimeMs();
 
     std::map<std::string, cv::Mat> m_images;
     bool m_exit = false;

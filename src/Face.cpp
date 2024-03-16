@@ -6,12 +6,16 @@
 // e-mail:  mail@agramakov.me
 //
 // *************************************************************************
-#include <opencv2/highgui.hpp>
+#include <chrono>
+#include <stdint.h>
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui.hpp>
 #include <stdexcept>
+
 #include "Face.hpp"
 
 using namespace cv;
+using namespace std::chrono;
 
 Face::Face()
 {
@@ -75,8 +79,24 @@ void Face::ShowDunno(int delay)
 
 void Face::Wait(int delay)
 {
-    if (waitKey(delay) == 27) // ESC
+    uint64_t start = GetTimeMs();
+    while (GetTimeMs() - start < delay)
     {
-        m_exit = true;
+        // Check for ESC key
+        if (waitKey(WAIT_DELTA) == 27) // ESC
+        {
+            m_exit = true;
+        }
+        
+        // Stop waiting if exiting
+        if (m_exit)
+        {
+            return;
+        }
     }
+}
+
+uint64_t Face::GetTimeMs()
+{
+    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }

@@ -40,17 +40,19 @@ void proto_face()
 {
     Face face;
     
-    face.ShowCalm();
-    face.ShowHappy();
-    face.ShowSad();
-    face.ShowDunno();
+    face.ShowThinking();
+    face.ShowCalm(3000);
+    face.ShowHappy(500);
+    face.ShowSad(500);
+    face.ShowDunno(500);
+    face.ShowThinking();
     face.ShowThinking();
     face.ShowThinking();
 }
 
 int main(int argc, char **argv)
 {
-    proto_recognition();
+    // proto_recognition();
     proto_face();
     return 0;
 }
