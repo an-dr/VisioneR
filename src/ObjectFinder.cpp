@@ -33,7 +33,7 @@ void ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
         return;
     }
 
-    DetectKeypoints("Object", m_objectImg, m_objectKeypoints);
+    DetectKeypoints("Object", m_objectImg, m_objectKeypoints, true);
     ComputeDescriptors("Object", m_objectImg, m_objectKeypoints, m_objectDescriptors);
 
     DetectKeypoints("Scene", m_sceneImg, m_sceneKeypoints);
@@ -102,7 +102,7 @@ bool ObjectFinder::DetectKeypoints(string image_name,
         drawKeypoints(img_keypoints, keypoints, img_keypoints, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
         // show
         imshow("Keypoints", img_keypoints);
-        waitKey(500);
+        waitKey(1500);
     }
     return true;
 }
@@ -314,7 +314,7 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
 
     printf("Center: (%.2f, %.2f)\n", out_center.x, out_center.y);
     imshow("Result", sceneImg);
-    waitKey(0);
+    waitKey(300);
     return true;
 }
 
