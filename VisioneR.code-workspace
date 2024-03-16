@@ -4,7 +4,9 @@
             "path": "."
         }
     ],
-    "settings": {},
+    "settings": {
+        "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    },
     "launch": {
         "version": "0.2.0",
         "configurations": [
