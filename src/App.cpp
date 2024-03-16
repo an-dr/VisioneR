@@ -15,36 +15,70 @@
 #include <opencv2/highgui.hpp>
 
 #include "ObjectFinder.hpp"
+#include "FileScanner.hpp"
 #include "Face.hpp"
 
 using namespace cv;
 
-int App()
+static Face face;
+static ObjectFinder of;
+static Mat objectImg;
+static Mat sceneImg;
+
+void Init()
 {
-    //Init
-    Face face;
+    // Init
     face.ShowThinking();
     face.ShowCalm(3000);
-    face.ShowHappy(500);
-    face.ShowSad(500);
-    face.ShowDunno(500);
-    face.ShowThinking();
-    face.ShowThinking();
-    face.ShowThinking();
-    
+    face.ShowBlink(500);
+    face.ShowCalm(1000);
+    face.ShowBlink(500);
+    face.ShowCalm(1000);
     // Image recognition
-    Mat objectImg = imread("img_obj.jpg");
-    Mat sceneImg = imread("img_scene.jpg");
+    // objectImg = imread("img_obj.jpg");
+    // sceneImg = imread("img_scene.jpg");
+// 
+    // of.SetScene(sceneImg);
+}
 
-    ObjectFinder of;
-    of.SetScene(sceneImg);
-    
+void Find()
+{
     Point2f result;
     of.Find(objectImg, result);
-    
+
     // Reporting result
     printf("Result: %f %f\n", result.x, result.y);
     face.ShowHappy(10000);
+}
+
+int App()
+{
     
+    Init();
+    
+    FileScanner fs("input");
+    auto objects = fs.GetFiles("object_");
+    auto scenes = fs.GetFiles("scene_");
+
+    for (auto &scene : scenes)
+    {
+        of.SetScene(scene);
+        face.ShowCalm(1000);
+        
+        for (auto &object : objects)
+        {
+            Point2f result;
+            face.ShowThinking();
+            of.Find(object, result);
+            printf("Result: %f %f\n", result.x, result.y);
+            face.ShowCalm(1000);
+            destroyWindow("Keypoints");
+            
+        }
+    }
+    face.ShowCalm(1000);
+    face.ShowBlink(500);
+    face.ShowCalm(1000);
+    face.ShowHappy(10000);
     return 0;
 }
