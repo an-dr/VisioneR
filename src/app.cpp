@@ -26,7 +26,7 @@ using namespace cv;
 void proto_recognition()
 {
     Mat objectImg = imread("img_obj.jpg");
-    Mat sceneImg = imread("img_scene_many.jpg");
+    Mat sceneImg = imread("img_scene.jpg");
 
     ObjectFinder of;
     of.SetScene(sceneImg);
@@ -41,7 +41,7 @@ void proto_face()
     Face face;
     
     face.ShowThinking();
-    face.ShowCalm(3000);
+    face.ShowCalm(1000);
     face.ShowHappy(500);
     face.ShowSad(500);
     face.ShowDunno(500);
@@ -52,7 +52,19 @@ void proto_face()
 
 int main(int argc, char **argv)
 {
-    // proto_recognition();
-    proto_face();
+    // proto_face();
+    Face face;
+    
+    face.ShowThinking();
+    face.ShowCalm(3000);
+    face.ShowHappy(500);
+    face.ShowSad(500);
+    face.ShowDunno(500);
+    face.ShowThinking();
+    face.ShowThinking();
+    face.ShowThinking();
+    proto_recognition();
+    face.ShowHappy(10000);
+    
     return 0;
 }
