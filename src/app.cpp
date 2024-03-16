@@ -1,4 +1,14 @@
-// https://docs.opencv.org/3.4/d7/dff/tutorial_feature_homography.html
+// *************************************************************************
+//
+// Copyright (c) 2024 Andrei Gramakov. All rights reserved.
+//
+// This file is licensed under the terms of the MIT license.
+// For a copy, see: https://opensource.org/licenses/MIT
+//
+// site:    https://agramakov.me
+// e-mail:  mail@agramakov.me
+//
+// *************************************************************************
 
 #include <opencv2/calib3d/calib3d.hpp> // for homography
 #include <opencv2/core/core.hpp>
@@ -9,22 +19,40 @@
 #include <opencv2/opencv_modules.hpp>
 
 #include "ObjectFinder.hpp"
+#include "Face.hpp"
 
-void proto2()
+using namespace cv;
+
+void proto_recognition()
 {
-    cv::Mat objectImg = cv::imread("img_obj.jpg");
-    cv::Mat sceneImg = cv::imread("img_scene_many.jpg");
+    Mat objectImg = imread("img_obj.jpg");
+    Mat sceneImg = imread("img_scene_many.jpg");
 
     ObjectFinder of;
     of.SetScene(sceneImg);
 
-    cv::Point2f result;
+    Point2f result;
     of.Find(objectImg, result);
     printf("Result: %f %f\n", result.x, result.y);
 }
 
+void proto_face()
+{
+    Face face;
+    
+    face.ShowThinking();
+    face.ShowCalm(3000);
+    face.ShowHappy(500);
+    face.ShowSad(500);
+    face.ShowDunno(500);
+    face.ShowThinking();
+    face.ShowThinking();
+    face.ShowThinking();
+}
+
 int main(int argc, char **argv)
 {
-    proto2();
+    // proto_recognition();
+    proto_face();
     return 0;
 }
