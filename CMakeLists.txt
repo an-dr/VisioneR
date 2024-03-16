@@ -33,3 +33,9 @@ install(FILES img/img_obj.jpg
               img/img_scene_many.jpg
               img/img_scene_obj.jpg
         DESTINATION .)
+install (FILES assets/png/blink.png
+               assets/png/calm.png
+               assets/png/confused.png
+               assets/png/happy.png
+               assets/png/sad.png
+        DESTINATION ./assets)
