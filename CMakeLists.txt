@@ -18,7 +18,8 @@ include_directories(${Qt5PrintSupport_INCLUDE_DIRS})
 
 
 # Executable
-add_executable(visioner src/app.cpp
+add_executable(visioner src/main.cpp
+                        src/App.cpp
                         src/ObjectFinder.cpp
                         src/Face.cpp
                         )
