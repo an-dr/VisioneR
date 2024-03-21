@@ -2,20 +2,21 @@
 //
 // Copyright (c) 2024 Andrei Gramakov. All rights reserved.
 //
-// This file is licensed under the terms of the MIT license.
-// For a copy, see: https://opensource.org/licenses/MIT
-//
 // site:    https://agramakov.me
 // e-mail:  mail@agramakov.me
 //
 // *************************************************************************
 
-#include "App.hpp"
-#include "Input/InputFiles.hpp"
+#pragma once
 
-int main(int argc, char **argv)
+#include <opencv2/core/core.hpp>
+#include <vector>
+
+class InputInterface
 {
-    InputFiles input;
-    input.LoadFiles("input");
-    return App(&input);
-}
+public:
+    InputInterface() = default;
+    virtual cv::Mat GetScene() = 0;
+    virtual std::vector<cv::Mat>& GetObjects() = 0;
+};
+ 

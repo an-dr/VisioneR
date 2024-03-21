@@ -9,4 +9,6 @@
 
 #pragma once
 
-int App();
+#include "Input/InputInterface.hpp"
+
+int App(InputInterface *input);

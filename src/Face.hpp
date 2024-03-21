@@ -7,6 +7,8 @@
 //
 // *************************************************************************
 
+#pragma once
+    
 #include <map>
 #include <opencv2/core/core.hpp>
 #include <stdint.h>
@@ -37,6 +39,7 @@ public:
     void ShowHappy(int delay = 500);
     void ShowSad(int delay = 500);
     void ShowDunno(int delay = 500);
+    bool IsExit();
 
 private:
     static const int WAIT_DELTA = 100;

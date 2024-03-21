@@ -63,31 +63,15 @@ void ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
     printf("Closing...\n");
 }
 
-void ObjectFinder::Find(std::string &objectImg, cv::Point2f &out_result) {
-    Mat obj = imread(objectImg);
-    if (obj.empty())
-    {
-        printf("Error: can't load image %s\n", objectImg.c_str());
-        return;
-    }
-    Find(obj, out_result);
-}
-
-bool ObjectFinder::SetScene(std::string &sceneImgPath)
-{
-    m_sceneImg = imread(sceneImgPath);
-    if (m_sceneImg.empty())
-    {
-        printf("Error: can't load image %s\n", sceneImgPath.c_str());
-        return false;
-    }
-    imshow("Result", m_sceneImg);
-    return true;
-}
-
 bool ObjectFinder::SetScene(cv::Mat &sceneImg)
 {
+    if (sceneImg.empty())
+    {
+        printf("Error: empty/no image\n");
+        return false;
+    }
     m_sceneImg = sceneImg;
+    imshow("Result", m_sceneImg);
     return true;
 }
 
