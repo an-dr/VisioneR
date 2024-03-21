@@ -10,12 +10,11 @@
 //
 // *************************************************************************
 
-#include <stdint.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "Input/InputInterface.hpp"
 #include "ObjectFinder.hpp"
-#include "FileScanner.hpp"
 #include "Face.hpp"
 
 using namespace cv;
@@ -37,7 +36,7 @@ void Init()
     // Image recognition
     // objectImg = imread("img_obj.jpg");
     // sceneImg = imread("img_scene.jpg");
-// 
+    //
     // of.SetScene(sceneImg);
 }
 
@@ -51,21 +50,18 @@ void Find()
     face.ShowHappy(10000);
 }
 
-int App()
+int App(InputInterface *input)
 {
-    
-    Init();
-    
-    FileScanner fs("input");
-    auto objects = fs.GetFiles("object_");
-    auto scenes = fs.GetFiles("scene_");
 
-    for (auto &scene : scenes)
+    Init();
+
+    while (!face.IsExit())
     {
-        of.SetScene(scene);
+        auto scene_img = input->GetScene();
+        of.SetScene(scene_img);
         face.ShowCalm(1000);
-        
-        for (auto &object : objects)
+
+        for (auto &object : input->GetObjects())
         {
             Point2f result;
             face.ShowThinking();
@@ -73,12 +69,11 @@ int App()
             printf("Result: %f %f\n", result.x, result.y);
             face.ShowCalm(1000);
             destroyWindow("Keypoints");
-            
         }
+        face.ShowCalm(1000);
+        face.ShowBlink(500);
+        face.ShowCalm(1000);
+        face.ShowHappy(10000);
     }
-    face.ShowCalm(1000);
-    face.ShowBlink(500);
-    face.ShowCalm(1000);
-    face.ShowHappy(10000);
     return 0;
 }

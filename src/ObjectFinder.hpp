@@ -17,9 +17,7 @@ class ObjectFinder
 {
 public:
     void Find(cv::Mat &objectImg, cv::Point2f &out_result);
-    void Find(std::string &objectImg, cv::Point2f &out_result);
     bool SetScene(cv::Mat &sceneImg);
-    bool SetScene(std::string &sceneImgPath);
 
 private:
     bool DetectKeypoints(std::string image_name,

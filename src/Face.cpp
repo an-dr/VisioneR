@@ -77,6 +77,11 @@ void Face::ShowDunno(int delay)
     Wait(delay);
 }
 
+bool Face::IsExit()
+{
+    return m_exit;
+}
+
 void Face::Wait(int delay)
 {
     uint64_t start = GetTimeMs();
