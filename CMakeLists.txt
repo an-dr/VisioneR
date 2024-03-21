@@ -18,10 +18,15 @@ include_directories(${Qt5PrintSupport_INCLUDE_DIRS})
 
 
 # Executable
-add_executable(visioner src/app.cpp
-                        src/ObjectFinder.cpp
-                        src/Face.cpp
+add_executable(visioner src/main.cpp
+                        src/App/App.cpp
+                        src/Visioner/AppVisioner.cpp
+                        src/App/ObjectFinder.cpp
+                        src/Visioner/Face.cpp
+                        src/Visioner/FileScanner.cpp
+                        src/Visioner/InputFiles.cpp
                         )
+target_include_directories(visioner PRIVATE src)
 target_link_libraries(visioner ${OpenCV_LIBS} ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
 # target_link_options (visioner PRIVATE "$<$<BOOL:$<TARGET_PROPERTY:POSITION_INDEPENDENT_CODE>>:-fPIC>")
 
@@ -34,6 +39,12 @@ install(FILES img/img_obj.jpg
               img/img_scene_many.jpg
               img/img_scene_obj.jpg
         DESTINATION .)
+        
+install (FILES img/examples/object_1.jpg
+               img/examples/scene_1.jpg
+               img/examples/object_2.jpg
+         DESTINATION ./input)
+         
 install (FILES assets/png/blink.png
                assets/png/calm.png
                assets/png/confused.png
