@@ -10,24 +10,18 @@
 //
 // *************************************************************************
 
-#include "Visioner/AppVisioner.hpp"
-#include "Visioner/Face.hpp"
-#include "Visioner/InputFiles.hpp"
+#include <opencv2/highgui.hpp>
+#include "App/FaceInterface.hpp"
+#include "App/InputInterface.hpp"
+#include "AppVisioner.hpp"
 
-int main(int argc, char **argv)
+
+AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input)
+    : App(face, input)
 {
-    InputFiles input;
-    Face face;
-    input.LoadFiles("input");
+}
 
-    AppVisioner app(&face, &input);
-    
-    // Until the face is not exiting
-    while(!face.IsExit())
-    {
-        app.Intro();
-        app.RunOnce();
-        app.Outro();
-    }
-    return 0;
+void AppVisioner::Delay(int ms)
+{
+    cv::waitKey(ms);
 }

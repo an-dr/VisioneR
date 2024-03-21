@@ -8,13 +8,14 @@
 // *************************************************************************
 
 #pragma once
-    
+
 #include <map>
 #include <opencv2/core/core.hpp>
 #include <stdint.h>
 #include <string>
+#include "App/FaceInterface.hpp"
 
-class Face
+class Face : public FaceInterface
 {
 
 public:
@@ -25,25 +26,24 @@ public:
         {"thinking1", "assets/thinking1.png"},
         {"thinking2", "assets/thinking2.png"},
         {"thinking3", "assets/thinking3.png"},
-        {"blink"    , "assets/blink.png"    },
-        {"calm"     , "assets/calm.png"     },
-        {"happy"    , "assets/happy.png"    },
-        {"sad"      , "assets/sad.png"      },
-        {"dunno"    , "assets/dunno.png"    }
-    };
+        {"blink", "assets/blink.png"},
+        {"calm", "assets/calm.png"},
+        {"happy", "assets/happy.png"},
+        {"sad", "assets/sad.png"},
+        {"dunno", "assets/dunno.png"}};
 
     Face();
-    void ShowThinking();
-    void ShowBlink(int delay = 500);
-    void ShowCalm(int delay = 500);
-    void ShowHappy(int delay = 500);
-    void ShowSad(int delay = 500);
-    void ShowDunno(int delay = 500);
+    void ShowThinking() override;
+    void ShowBlink(int delay = 500) override;
+    void ShowCalm(int delay = 500) override;
+    void ShowHappy(int delay = 500) override;
+    void ShowSad(int delay = 500) override;
+    void ShowDunno(int delay = 500) override;
     bool IsExit();
 
 private:
     static const int WAIT_DELTA = 100;
-    void Wait(int delay);
+    void Delay(int delay) override;
     uint64_t GetTimeMs();
 
     std::map<std::string, cv::Mat> m_images;

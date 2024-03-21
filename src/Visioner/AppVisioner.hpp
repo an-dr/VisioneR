@@ -9,6 +9,12 @@
 
 #pragma once
 
-#include "Input/InputInterface.hpp"
+#include "App/App.hpp"
 
-int App(InputInterface *input);
+class AppVisioner : public App
+{
+public:
+    AppVisioner(FaceInterface *face, InputInterface *input);
+    void Delay(int ms) override;
+    ~AppVisioner() = default;
+};

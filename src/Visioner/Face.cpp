@@ -40,41 +40,41 @@ void Face::ShowThinking()
 {
     int w_time = 350;
     imshow(WIN_NAME, m_images["thinking1"]);
-    Wait(w_time);
+    Delay(w_time);
     imshow(WIN_NAME, m_images["thinking2"]);
-    Wait(w_time);
+    Delay(w_time);
     imshow(WIN_NAME, m_images["thinking3"]);
-    Wait(w_time);
+    Delay(w_time);
 }
 
 void Face::ShowBlink(int delay)
 {
     imshow(WIN_NAME, m_images["blink"]);
-    Wait(delay);
+    Delay(delay);
 }
 
 void Face::ShowCalm(int delay)
 {
     imshow(WIN_NAME, m_images["calm"]);
-    Wait(delay);
+    Delay(delay);
 }
 
 void Face::ShowHappy(int delay)
 {
     imshow(WIN_NAME, m_images["happy"]);
-    Wait(delay);
+    Delay(delay);
 }
 
 void Face::ShowSad(int delay)
 {
     imshow(WIN_NAME, m_images["sad"]);
-    Wait(delay);
+    Delay(delay);
 }
 
 void Face::ShowDunno(int delay)
 {
     imshow(WIN_NAME, m_images["dunno"]);
-    Wait(delay);
+    Delay(delay);
 }
 
 bool Face::IsExit()
@@ -82,7 +82,7 @@ bool Face::IsExit()
     return m_exit;
 }
 
-void Face::Wait(int delay)
+void Face::Delay(int delay)
 {
     uint64_t start = GetTimeMs();
     while (GetTimeMs() - start < delay)
@@ -93,7 +93,7 @@ void Face::Wait(int delay)
             m_exit = true;
         }
         
-        // Stop waiting if exiting
+        // Stop Delaying if exiting
         if (m_exit)
         {
             return;
