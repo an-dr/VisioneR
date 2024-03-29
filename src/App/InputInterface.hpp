@@ -17,6 +17,7 @@ class InputInterface
 public:
     InputInterface() = default;
     virtual cv::Mat GetScene() = 0;
-    virtual std::vector<cv::Mat>& GetObjects() = 0;
+    virtual std::vector<cv::Mat>& GetGoodObjects() = 0;
+    virtual std::vector<cv::Mat>& GetBadObjects() = 0;
 };
  

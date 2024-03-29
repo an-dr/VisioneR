@@ -8,6 +8,7 @@
 // *************************************************************************
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include "App.hpp"
 
 using namespace cv;
@@ -19,11 +20,10 @@ App::App(FaceInterface *face, InputInterface *input)
 
 void App::Intro()
 {
-    m_face->ShowThinking();
-    m_face->ShowCalm(3000);
-    m_face->ShowBlink(500);
     m_face->ShowCalm(1000);
-    m_face->ShowBlink(500);
+    m_face->ShowBlink(200);
+    m_face->ShowCalm(1000);
+    m_face->ShowBlink(200);
     m_face->ShowCalm(1000);
 }
 
@@ -39,16 +39,58 @@ int App::RunOnce()
 {
 
     auto scene_img = m_input->GetScene();
+    imshow("Scene", scene_img);
     m_objectFinder.SetScene(scene_img);
-    m_face->ShowCalm(1000);
+    Intro();
 
-    for (auto &object : m_input->GetObjects())
+    int good_objects = 0;
+    int bad_objects = 0;
+
+    for (auto &object : m_input->GetGoodObjects())
     {
         Point2f result;
-        m_face->ShowThinking();
-        m_objectFinder.Find(object, result);
-        printf("Result: %f %f\n", result.x, result.y);
-        m_face->ShowCalm(1000);
+        if (m_objectFinder.Find(object, result))
+        {
+            good_objects++;
+            printf("Good object found: %f %f\n", result.x, result.y);
+        }
+        else
+        {
+            printf("Good object not found\n");
+        }
+        printf("Good objects found: %d\n", good_objects);
     }
-    return 0;
+
+    for (auto &object : m_input->GetBadObjects())
+    {
+        Point2f result;
+        if (m_objectFinder.Find(object, result))
+        {
+            bad_objects++;
+            printf("Bad object found: %f %f\n", result.x, result.y);
+        }
+        else
+        {
+            printf("Bad object not found\n");
+        }
+        printf("Bad objects found: %d\n", bad_objects);
+    }
+
+    if (good_objects == 0 && bad_objects == 0)
+    {
+        return -1;
+    }
+
+    if (good_objects > bad_objects)
+    {
+        return 1;
+    }
+    else if (good_objects < bad_objects)
+    {
+        return 2;
+    }
+    else
+    {
+        return 0;
+    }
 }

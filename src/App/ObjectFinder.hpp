@@ -16,7 +16,7 @@
 class ObjectFinder
 {
 public:
-    void Find(cv::Mat &objectImg, cv::Point2f &out_result);
+    bool Find(cv::Mat &objectImg, cv::Point2f &out_result);
     bool SetScene(cv::Mat &sceneImg);
 
 private:
@@ -55,13 +55,21 @@ private:
     bool GetResult(cv::Mat &objectImg,
                    cv::Mat &sceneImg,
                    cv::Mat &H,
-                   cv::Point2f &out_center);
+                   cv::Point2f &out_center,
+                   bool show = false);
 
     static bool CalculateLinesIntersection(cv::Point2f &p1,
                                            cv::Point2f &p2,
                                            cv::Point2f &p3,
                                            cv::Point2f &p4,
                                            cv::Point2f &r);
+                                           
+    static float CalculateDistance(cv::Point2f &p1, cv::Point2f &p2);
+    static bool VerifySize(cv::Point2f &p1,
+                           cv::Point2f &p2,
+                           cv::Point2f &p3,
+                           cv::Point2f &p4,
+                           float minSize);
 
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;

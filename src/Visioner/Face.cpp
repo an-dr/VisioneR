@@ -77,6 +77,12 @@ void Face::ShowDunno(int delay)
     Delay(delay);
 }
 
+void Face::ShowConfused(int delay)
+{
+    imshow(WIN_NAME, m_images["confused"]);
+    Delay(delay);
+}
+
 bool Face::IsExit()
 {
     return m_exit;

@@ -30,7 +30,8 @@ public:
         {"calm", "assets/calm.png"},
         {"happy", "assets/happy.png"},
         {"sad", "assets/sad.png"},
-        {"dunno", "assets/dunno.png"}};
+        {"dunno", "assets/dunno.png"},
+        {"confused", "assets/confused.png"} };
 
     Face();
     void ShowThinking() override;
@@ -39,6 +40,7 @@ public:
     void ShowHappy(int delay = 500) override;
     void ShowSad(int delay = 500) override;
     void ShowDunno(int delay = 500) override;
+    void ShowConfused(int delay = 500) override;
     bool IsExit();
 
 private:

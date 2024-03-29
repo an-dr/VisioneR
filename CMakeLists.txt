@@ -40,9 +40,12 @@ install(FILES img/img_obj.jpg
               img/img_scene_obj.jpg
         DESTINATION .)
         
-install (FILES img/examples/object_1.jpg
+install (FILES img/examples/object_good_1.jpg
+               img/examples/object_bad_1.jpg
                img/examples/scene_1.jpg
-               img/examples/object_2.jpg
+               img/examples/scene_2.jpg
+               img/examples/scene_3.jpg
+               img/examples/scene_4.jpg
          DESTINATION ./input)
          
 install (FILES assets/png/blink.png

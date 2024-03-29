@@ -24,16 +24,16 @@
 using namespace cv;
 using namespace std;
 
-void ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
+bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
 {
     m_objectImg = objectImg;
     if (m_objectImg.empty() || m_sceneImg.empty())
     {
         printf("Error: empty images\n");
-        return;
+        return false;
     }
 
-    DetectKeypoints("Object", m_objectImg, m_objectKeypoints, true);
+    DetectKeypoints("Object", m_objectImg, m_objectKeypoints, false);
     ComputeDescriptors("Object", m_objectImg, m_objectKeypoints, m_objectDescriptors);
 
     DetectKeypoints("Scene", m_sceneImg, m_sceneKeypoints);
@@ -56,11 +56,22 @@ void ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
 
     // Find homography
     Mat H;
-    FindHomography(src_points, dst_points, outlier_mask, H);
+    bool result = false;
+    result = FindHomography(src_points, dst_points, outlier_mask, H, 20);
+    if (!result)
+    {
+        printf("Error: homography not found\n");
+        return false;
+    }
 
     // Get result
-    GetResult(m_objectImg, m_sceneImg, H, out_result);
-    printf("Closing...\n");
+    result = GetResult(m_objectImg, m_sceneImg, H, out_result, true);
+    if (!result)
+    {
+        printf("Error: result not found\n");
+        return result;
+    }
+    return result;
 }
 
 bool ObjectFinder::SetScene(cv::Mat &sceneImg)
@@ -71,10 +82,9 @@ bool ObjectFinder::SetScene(cv::Mat &sceneImg)
         return false;
     }
     m_sceneImg = sceneImg;
-    imshow("Result", m_sceneImg);
+    // imshow("Result", m_sceneImg);
     return true;
 }
-
 
 bool ObjectFinder::DetectKeypoints(string image_name,
                                    Mat &img,
@@ -288,7 +298,8 @@ bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
 bool ObjectFinder::GetResult(cv::Mat &objectImg,
                              cv::Mat &sceneImg,
                              cv::Mat &H,
-                             cv::Point2f &out_center)
+                             cv::Point2f &out_center,
+                             bool show)
 {
     //-- Get the corners from the image_1 ( the object to be "detected" )
     std::vector<Point2f> obj_corners(4);
@@ -296,17 +307,15 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
     obj_corners[1] = Point2f((float)objectImg.cols, 0);
     obj_corners[2] = Point2f((float)objectImg.cols, (float)objectImg.rows);
     obj_corners[3] = Point2f(0, (float)objectImg.rows);
+
     std::vector<Point2f> scene_corners(4);
     perspectiveTransform(obj_corners, scene_corners, H);
 
-    //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-    line(sceneImg, scene_corners[0], scene_corners[1], Scalar(0, 255, 0), 4);
-    line(sceneImg, scene_corners[1], scene_corners[2], Scalar(0, 255, 0), 4);
-    line(sceneImg, scene_corners[2], scene_corners[3], Scalar(0, 255, 0), 4);
-    line(sceneImg, scene_corners[3], scene_corners[0], Scalar(0, 255, 0), 4);
-    // Cross
-    line(sceneImg, scene_corners[0], scene_corners[2], Scalar(0, 255, 0), 4);
-    line(sceneImg, scene_corners[3], scene_corners[1], Scalar(0, 255, 0), 4);
+    if (!VerifySize(scene_corners[0], scene_corners[1],
+                    scene_corners[2], scene_corners[3], 20))
+    {
+        return false;
+    }
 
     // Center
     bool result = CalculateLinesIntersection(scene_corners[0], scene_corners[2],
@@ -319,8 +328,24 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
     }
 
     printf("Center: (%.2f, %.2f)\n", out_center.x, out_center.y);
-    imshow("Result", sceneImg);
-    waitKey(300);
+
+
+    if (show)
+    {
+        Mat sceneImgCopy = sceneImg.clone();
+        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+        line(sceneImgCopy, scene_corners[0], scene_corners[1], Scalar(0, 255, 0), 4);
+        line(sceneImgCopy, scene_corners[1], scene_corners[2], Scalar(0, 255, 0), 4);
+        line(sceneImgCopy, scene_corners[2], scene_corners[3], Scalar(0, 255, 0), 4);
+        line(sceneImgCopy, scene_corners[3], scene_corners[0], Scalar(0, 255, 0), 4);
+        // Cross
+        line(sceneImgCopy, scene_corners[0], scene_corners[2], Scalar(0, 255, 0), 4);
+        line(sceneImgCopy, scene_corners[3], scene_corners[1], Scalar(0, 255, 0), 4);
+
+        imshow("Scene", sceneImgCopy);
+        waitKey(1000);
+    }
+
     return true;
 }
 
@@ -343,5 +368,34 @@ bool ObjectFinder::CalculateLinesIntersection(cv::Point2f &p1, cv::Point2f &p2, 
 
     r.x = (b2 - b1) / (a1 - a2);
     r.y = a1 * r.x + b1;
+    return true;
+}
+
+float ObjectFinder::CalculateDistance(cv::Point2f &p1, cv::Point2f &p2)
+{
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+
+bool ObjectFinder::VerifySize(cv::Point2f &p1, cv::Point2f &p2, cv::Point2f &p3, cv::Point2f &p4, float minSize)
+{
+    float d1 = CalculateDistance(p1, p2);
+    float d2 = CalculateDistance(p2, p3);
+    float d3 = CalculateDistance(p3, p4);
+    float d4 = CalculateDistance(p4, p1);
+
+    float min = d1;
+    if (d2 < min)
+        min = d2;
+    if (d3 < min)
+        min = d3;
+    if (d4 < min)
+        min = d4;
+
+    if (min < minSize)
+    {
+        printf("Error: object is too small\n");
+        return false;
+    }
+    printf("Min object dimension: %.2f\n", min);
     return true;
 }
