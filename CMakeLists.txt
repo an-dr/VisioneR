@@ -24,20 +24,13 @@ add_executable(visioner src/main.cpp
                         src/App/ObjectFinder.cpp
                         src/Visioner/Face.cpp
                         src/Visioner/FileScanner.cpp
-                        src/Visioner/InputFiles.cpp
-                        )
+                        src/Visioner/InputFiles.cpp)
 target_include_directories(visioner PRIVATE src)
 target_link_libraries(visioner ${OpenCV_LIBS} ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
-# target_link_options (visioner PRIVATE "$<$<BOOL:$<TARGET_PROPERTY:POSITION_INDEPENDENT_CODE>>:-fPIC>")
 
 
 # Install
 install(TARGETS visioner
-        DESTINATION .)
-install(FILES img/img_obj.jpg
-              img/img_scene.jpg
-              img/img_scene_many.jpg
-              img/img_scene_obj.jpg
         DESTINATION .)
         
 install (FILES img/examples/object_good_1.jpg

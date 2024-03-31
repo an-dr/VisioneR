@@ -27,25 +27,9 @@ void App::Intro()
     m_face->ShowCalm(1000);
 }
 
-void App::Outro()
+int App::FindGoodObjects()
 {
-    m_face->ShowCalm(1000);
-    m_face->ShowBlink(500);
-    m_face->ShowCalm(1000);
-    m_face->ShowHappy(10000);
-}
-
-int App::RunOnce()
-{
-
-    auto scene_img = m_input->GetScene();
-    imshow("Scene", scene_img);
-    m_objectFinder.SetScene(scene_img);
-    Intro();
-
     int good_objects = 0;
-    int bad_objects = 0;
-
     for (auto &object : m_input->GetGoodObjects())
     {
         Point2f result;
@@ -60,7 +44,12 @@ int App::RunOnce()
         }
         printf("Good objects found: %d\n", good_objects);
     }
+    return good_objects;
+}
 
+int App::FindBadObjects()
+{
+    int bad_objects = 0;
     for (auto &object : m_input->GetBadObjects())
     {
         Point2f result;
@@ -75,22 +64,40 @@ int App::RunOnce()
         }
         printf("Bad objects found: %d\n", bad_objects);
     }
+    return bad_objects;
+}
+
+
+int App::RunOnce()
+{
+
+    auto scene_img = m_input->GetScene();
+    imshow("Scene", scene_img);
+    m_objectFinder.SetScene(scene_img);
+    Intro();
+
+    int good_objects = FindGoodObjects();
+    int bad_objects = FindBadObjects();
 
     if (good_objects == 0 && bad_objects == 0)
     {
+        m_face->ShowDunno(3000);
         return -1;
     }
 
     if (good_objects > bad_objects)
     {
+        m_face->ShowHappy(3000);
         return 1;
     }
     else if (good_objects < bad_objects)
     {
+        m_face->ShowSad(3000);
         return 2;
     }
     else
     {
+        m_face->ShowConfused(3000);
         return 0;
     }
 }
