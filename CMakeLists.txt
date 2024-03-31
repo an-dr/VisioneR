@@ -41,13 +41,13 @@ install (FILES img/examples/object_good_1.jpg
                img/examples/scene_4.jpg
          DESTINATION ./input)
          
-install (FILES assets/png/blink.png
-               assets/png/calm.png
-               assets/png/confused.png
-               assets/png/happy.png
-               assets/png/sad.png
-               assets/png/thinking1.png
-               assets/png/thinking2.png
-               assets/png/thinking3.png
-               assets/png/dunno.png
-        DESTINATION ./assets)
+install (FILES lib/universal_faces/png/blink.png
+               lib/universal_faces/png/calm.png
+               lib/universal_faces/png/confused.png
+               lib/universal_faces/png/happy.png
+               lib/universal_faces/png/sad.png
+               lib/universal_faces/png/thinking1.png
+               lib/universal_faces/png/thinking2.png
+               lib/universal_faces/png/thinking3.png
+               lib/universal_faces/png/dunno.png
+        DESTINATION ./faces)

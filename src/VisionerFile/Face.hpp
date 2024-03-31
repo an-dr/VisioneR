@@ -23,15 +23,15 @@ public:
     static const int WIN_SIZE_Y = 256;
     static constexpr char WIN_NAME[] = "VisioneR";
     std::map<std::string, std::string> m_img_paths = {
-        {"thinking1", "assets/thinking1.png"},
-        {"thinking2", "assets/thinking2.png"},
-        {"thinking3", "assets/thinking3.png"},
-        {"blink", "assets/blink.png"},
-        {"calm", "assets/calm.png"},
-        {"happy", "assets/happy.png"},
-        {"sad", "assets/sad.png"},
-        {"dunno", "assets/dunno.png"},
-        {"confused", "assets/confused.png"} };
+        {"thinking1", "faces/thinking1.png"},
+        {"thinking2", "faces/thinking2.png"},
+        {"thinking3", "faces/thinking3.png"},
+        {"blink", "faces/blink.png"},
+        {"calm", "faces/calm.png"},
+        {"happy", "faces/happy.png"},
+        {"sad", "faces/sad.png"},
+        {"dunno", "faces/dunno.png"},
+        {"confused", "faces/confused.png"} };
 
     Face();
     void ShowThinking() override;
