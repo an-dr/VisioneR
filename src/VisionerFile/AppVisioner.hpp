@@ -16,5 +16,6 @@ class AppVisioner : public App
 public:
     AppVisioner(FaceInterface *face, InputInterface *input);
     void Delay(int ms) override;
+    void PreFindAction() override;
     ~AppVisioner() = default;
 };

@@ -17,6 +17,7 @@ class ObjectFinder
 {
 public:
     bool Find(cv::Mat &objectImg, cv::Point2f &out_result);
+    const cv::Mat & GetScene() const { return m_sceneImg; }
     bool SetScene(cv::Mat &sceneImg);
 
 private:
@@ -57,6 +58,7 @@ private:
                    cv::Mat &H,
                    cv::Point2f &out_center,
                    bool show = false);
+    
 
     static bool CalculateLinesIntersection(cv::Point2f &p1,
                                            cv::Point2f &p2,

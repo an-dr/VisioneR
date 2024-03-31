@@ -10,9 +10,9 @@
 //
 // *************************************************************************
 
-#include "Visioner/AppVisioner.hpp"
-#include "Visioner/Face.hpp"
-#include "Visioner/InputFiles.hpp"
+#include "AppVisioner.hpp"
+#include "Face.hpp"
+#include "InputFiles.hpp"
 
 int main(int argc, char **argv)
 {

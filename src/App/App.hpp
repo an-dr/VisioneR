@@ -23,11 +23,13 @@ public:
     ~App() = default;
 
 protected:
-private:
-    virtual int FindGoodObjects();
-    virtual int FindBadObjects();
-
     ObjectFinder m_objectFinder;
     FaceInterface *m_face;
     InputInterface *m_input;
+    
+private:
+    virtual int FindGoodObjects();
+    virtual int FindBadObjects();
+    virtual void PreFindAction();
+
 };

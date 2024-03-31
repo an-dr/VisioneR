@@ -82,7 +82,6 @@ bool ObjectFinder::SetScene(cv::Mat &sceneImg)
         return false;
     }
     m_sceneImg = sceneImg;
-    // imshow("Result", m_sceneImg);
     return true;
 }
 

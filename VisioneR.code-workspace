@@ -15,7 +15,7 @@
                 "name": "Debug",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/install/visioner",
+                "program": "${workspaceFolder}/install/VisionerFile",
                 "miDebuggerPath": "gdb",
                 "args": [],
                 "stopAtEntry": false,

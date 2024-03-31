@@ -18,19 +18,19 @@ include_directories(${Qt5PrintSupport_INCLUDE_DIRS})
 
 
 # Executable
-add_executable(visioner src/main.cpp
+add_executable(VisionerFile src/VisionerFile/main.cpp
                         src/App/App.cpp
-                        src/Visioner/AppVisioner.cpp
                         src/App/ObjectFinder.cpp
-                        src/Visioner/Face.cpp
-                        src/Visioner/FileScanner.cpp
-                        src/Visioner/InputFiles.cpp)
-target_include_directories(visioner PRIVATE src)
-target_link_libraries(visioner ${OpenCV_LIBS} ${Qt5Core_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Network_LIBRARIES} ${Qt5PrintSupport_LIBRARIES})
+                        src/VisionerFile/AppVisioner.cpp
+                        src/VisionerFile/Face.cpp
+                        src/VisionerFile/FileScanner.cpp
+                        src/VisionerFile/InputFiles.cpp)
+target_include_directories(VisionerFile PRIVATE src)
+target_link_libraries(VisionerFile ${OpenCV_LIBS})
 
 
 # Install
-install(TARGETS visioner
+install(TARGETS VisionerFile
         DESTINATION .)
         
 install (FILES img/examples/object_good_1.jpg

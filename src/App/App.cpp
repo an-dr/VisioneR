@@ -8,7 +8,6 @@
 // *************************************************************************
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include "App.hpp"
 
 using namespace cv;
@@ -67,14 +66,15 @@ int App::FindBadObjects()
     return bad_objects;
 }
 
+void App::PreFindAction() { }
 
 int App::RunOnce()
 {
 
     auto scene_img = m_input->GetScene();
-    imshow("Scene", scene_img);
     m_objectFinder.SetScene(scene_img);
-    Intro();
+    
+    PreFindAction();
 
     int good_objects = FindGoodObjects();
     int bad_objects = FindBadObjects();

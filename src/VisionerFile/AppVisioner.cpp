@@ -25,3 +25,9 @@ void AppVisioner::Delay(int ms)
 {
     cv::waitKey(ms);
 }
+
+void AppVisioner::PreFindAction()
+{
+    cv::imshow("Scene", m_objectFinder.GetScene());
+    Intro();
+}
