@@ -28,7 +28,7 @@ The used provides their image of a scene with different objects. The app recogni
 
 How the project will be used by the users?
 
-![use](architecture/architecture_usecase.svg)
+![usecase](architecture/usecase.svg)
 
 ## 4. Key Architecture Decisions and Principles
 
@@ -49,17 +49,17 @@ The project is supposed to be tested by usage.
 
 ### 5.3 Hardware Components / Deployment
 
-![deploy](architecture/architecture_deploy.svg)
+![deploy](architecture/deploy.svg)
 
 ### 5.4 Software Structure
 
 Key Software components, dependency diagrams, etc.
 
-![deps](architecture/architecture_deps.svg)
+![dep](architecture/dep.drawio.svg)
 
 ### 5.5 System Conditions
 
-![states](architecture/architecture_states.svg)
+![states](architecture/states.svg)
 
 ### 5.6 Operational Logic
 
