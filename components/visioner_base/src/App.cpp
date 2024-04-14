@@ -8,7 +8,7 @@
 // *************************************************************************
 
 #include <opencv2/core/core.hpp>
-#include "App.hpp"
+#include "App/App.hpp"
 
 using namespace cv;
 
