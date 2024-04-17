@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
+project(visioner_base)
 
 include(ab.cmake)
-
-project(visioner_base)
-add_library(${PROJECT_NAME})
-target_init_abcmake(${PROJECT_NAME})
+add_component(visioner_base)

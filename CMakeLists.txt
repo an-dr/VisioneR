@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(visioner)
 
-include(ab.cmake)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
@@ -10,19 +9,13 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Executable
-add_executable(VisionerFile src/VisionerFile/main.cpp
-                            src/VisionerFile/AppVisioner.cpp
-                            src/VisionerFile/Face.cpp
-                            src/VisionerFile/FileScanner.cpp
-                            src/VisionerFile/InputFiles.cpp)
+include(ab.cmake)
+add_main_component(VisionerFile SOURCE_DIR "src/VisionerFile")
 target_link_libraries(VisionerFile PRIVATE ${OpenCV_LIBS})
-target_init_abcmake(VisionerFile)
-
 
 # Install
 install(TARGETS VisionerFile
         DESTINATION .)
-        
 install (FILES img/examples/object_good_1.jpg
                img/examples/object_bad_1.jpg
                img/examples/scene_1.jpg
@@ -30,7 +23,6 @@ install (FILES img/examples/object_good_1.jpg
                img/examples/scene_3.jpg
                img/examples/scene_4.jpg
          DESTINATION ./input)
-         
 install (FILES components/universal_faces/png/blink.png
                components/universal_faces/png/calm.png
                components/universal_faces/png/confused.png
