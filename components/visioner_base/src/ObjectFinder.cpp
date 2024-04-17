@@ -19,7 +19,7 @@
 #include <opencv2/opencv_modules.hpp>
 #include <stdio.h>
 
-#include "ObjectFinder.hpp"
+#include "App/ObjectFinder.hpp"
 
 using namespace cv;
 using namespace std;
