@@ -28,6 +28,8 @@ int main(int argc, char **argv)
     while(!face.IsExit())
     {
         result = app.RunOnce();
+        // # delay 1000 ms
+        app.Delay(3000);
     }
     return 0;
 }

@@ -35,12 +35,12 @@ public:
 
     Face();
     void ShowThinking() override;
-    void ShowBlink(int delay = 500) override;
-    void ShowCalm(int delay = 500) override;
-    void ShowHappy(int delay = 500) override;
-    void ShowSad(int delay = 500) override;
-    void ShowDunno(int delay = 500) override;
-    void ShowConfused(int delay = 500) override;
+    void ShowBlink(int delay = 0) override;
+    void ShowCalm(int delay = 0) override;
+    void ShowHappy(int delay = 0) override;
+    void ShowSad(int delay = 0) override;
+    void ShowDunno(int delay = 0) override;
+    void ShowConfused(int delay = 0) override;
     bool IsExit();
 
 private:

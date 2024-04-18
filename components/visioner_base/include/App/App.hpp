@@ -17,7 +17,7 @@ class App
 {
 public:
     App(FaceInterface *face, InputInterface *input);
-    virtual int RunOnce();
+    virtual int RunOnce(bool less_confused = false);
     virtual void Intro();
     virtual void Delay(int ms) = 0;
     ~App() = default;

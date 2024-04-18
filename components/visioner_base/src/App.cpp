@@ -66,14 +66,14 @@ int App::FindBadObjects()
     return bad_objects;
 }
 
-void App::PreFindAction() { }
+void App::PreFindAction() {}
 
-int App::RunOnce()
+int App::RunOnce(bool less_confused)
 {
 
     auto scene_img = m_input->GetScene();
     m_objectFinder.SetScene(scene_img);
-    
+
     PreFindAction();
 
     int good_objects = FindGoodObjects();
@@ -81,23 +81,30 @@ int App::RunOnce()
 
     if (good_objects == 0 && bad_objects == 0)
     {
-        m_face->ShowDunno(3000);
+        if (less_confused)
+        {
+            m_face->ShowCalm(1);
+        }
+        else
+        {
+            m_face->ShowDunno(1);
+        }
         return -1;
     }
 
     if (good_objects > bad_objects)
     {
-        m_face->ShowHappy(3000);
+        m_face->ShowHappy(1);
         return 1;
     }
     else if (good_objects < bad_objects)
     {
-        m_face->ShowSad(3000);
+        m_face->ShowSad(1);
         return 2;
     }
     else
     {
-        m_face->ShowConfused(3000);
+        m_face->ShowConfused(1);
         return 0;
     }
 }

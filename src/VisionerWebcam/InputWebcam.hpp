@@ -10,27 +10,25 @@
 #pragma once
 
 #include <string>
+#include <opencv2/opencv.hpp>
 #include "FileScanner.hpp"
 #include "App/InputInterface.hpp"
 
-class InputFiles : public InputInterface
+class InputWebcam : public InputInterface
 {
 public:
-    InputFiles();
+    InputWebcam();
     cv::Mat GetScene() override;
     std::vector<cv::Mat>& GetGoodObjects() override;
     std::vector<cv::Mat>& GetBadObjects() override;
     void LoadFiles(const std::string &path);
-    ~InputFiles();
+    ~InputWebcam();
 
 private:
     FileScanner *m_file_scanner;
     std::string m_path;
     std::vector<cv::Mat> m_objects_good;
     std::vector<cv::Mat> m_objects_bad;
-    std::vector<cv::Mat> m_scenes;
-    // scene vector current cursor
-    int m_scene_cursor;
-    
-    
+    cv::Mat m_scene;
+    cv::VideoCapture cap;
 };

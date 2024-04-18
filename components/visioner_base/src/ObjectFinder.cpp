@@ -24,7 +24,7 @@
 using namespace cv;
 using namespace std;
 
-bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
+bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
 {
     m_objectImg = objectImg;
     if (m_objectImg.empty() || m_sceneImg.empty())
@@ -65,7 +65,7 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result)
     }
 
     // Get result
-    result = GetResult(m_objectImg, m_sceneImg, H, out_result, true);
+    result = GetResult(m_objectImg, m_sceneImg, H, out_result, show_result);
     if (!result)
     {
         printf("Error: result not found\n");
@@ -308,7 +308,11 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
     obj_corners[3] = Point2f(0, (float)objectImg.rows);
 
     std::vector<Point2f> scene_corners(4);
-    perspectiveTransform(obj_corners, scene_corners, H);
+    try{
+        perspectiveTransform(obj_corners, scene_corners, H);
+    } catch (...) {
+        return false;
+    }
 
     if (!VerifySize(scene_corners[0], scene_corners[1],
                     scene_corners[2], scene_corners[3], 20))
@@ -342,7 +346,7 @@ bool ObjectFinder::GetResult(cv::Mat &objectImg,
         line(sceneImgCopy, scene_corners[3], scene_corners[1], Scalar(0, 255, 0), 4);
 
         imshow("Scene", sceneImgCopy);
-        waitKey(1000);
+        waitKey(1);
     }
 
     return true;

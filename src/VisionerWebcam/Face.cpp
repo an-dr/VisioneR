@@ -38,13 +38,13 @@ Face::Face()
 
 void Face::ShowThinking()
 {
-    int w_time = 350;
-    imshow(WIN_NAME, m_images["thinking1"]);
-    Delay(w_time);
-    imshow(WIN_NAME, m_images["thinking2"]);
-    Delay(w_time);
-    imshow(WIN_NAME, m_images["thinking3"]);
-    Delay(w_time);
+    // int w_time = 350;
+    // imshow(WIN_NAME, m_images["thinking1"]);
+    // Delay(w_time);
+    // imshow(WIN_NAME, m_images["thinking2"]);
+    // Delay(w_time);
+    // imshow(WIN_NAME, m_images["thinking3"]);
+    // Delay(w_time);
 }
 
 void Face::ShowBlink(int delay)

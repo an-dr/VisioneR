@@ -16,7 +16,7 @@
 class ObjectFinder
 {
 public:
-    bool Find(cv::Mat &objectImg, cv::Point2f &out_result);
+    bool Find(cv::Mat &objectImg, cv::Point2f &out_result, bool show_result = true);
     const cv::Mat & GetScene() const { return m_sceneImg; }
     bool SetScene(cv::Mat &sceneImg);
 

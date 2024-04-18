@@ -12,22 +12,23 @@
 
 #include "AppVisioner.hpp"
 #include "Face.hpp"
-#include "InputFiles.hpp"
+#include "InputWebcam.hpp"
 
 int main(int argc, char **argv)
 {
-    InputFiles input;
+    InputWebcam input;
     Face face;
     face.ShowThinking();
     input.LoadFiles("input");
 
     AppVisioner app(&face, &input);
+    app.Intro();
     
     // Until the face is not exiting
     int result = 0;
     while(!face.IsExit())
     {
-        result = app.RunOnce();
+        result = app.RunOnce(true);
     }
     return 0;
 }
