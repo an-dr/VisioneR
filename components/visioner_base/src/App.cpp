@@ -26,13 +26,13 @@ void App::Intro()
     m_face->ShowCalm(1000);
 }
 
-int App::FindGoodObjects()
+int App::FindGoodObjects(bool show_result)
 {
     int good_objects = 0;
     for (auto &object : m_input->GetGoodObjects())
     {
         Point2f result;
-        if (m_objectFinder.Find(object, result))
+        if (m_objectFinder.Find(object, result, show_result))
         {
             good_objects++;
             printf("Good object found: %f %f\n", result.x, result.y);
@@ -46,13 +46,13 @@ int App::FindGoodObjects()
     return good_objects;
 }
 
-int App::FindBadObjects()
+int App::FindBadObjects(bool show_result)
 {
     int bad_objects = 0;
     for (auto &object : m_input->GetBadObjects())
     {
         Point2f result;
-        if (m_objectFinder.Find(object, result))
+        if (m_objectFinder.Find(object, result, show_result))
         {
             bad_objects++;
             printf("Bad object found: %f %f\n", result.x, result.y);
@@ -68,7 +68,7 @@ int App::FindBadObjects()
 
 void App::PreFindAction() {}
 
-int App::RunOnce(bool less_confused)
+int App::RunOnce(bool show_result, bool less_confused)
 {
 
     auto scene_img = m_input->GetScene();
@@ -76,8 +76,8 @@ int App::RunOnce(bool less_confused)
 
     PreFindAction();
 
-    int good_objects = FindGoodObjects();
-    int bad_objects = FindBadObjects();
+    int good_objects = FindGoodObjects(show_result);
+    int bad_objects = FindBadObjects(show_result);
 
     if (good_objects == 0 && bad_objects == 0)
     {

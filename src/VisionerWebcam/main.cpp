@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     int result = 0;
     while(!face.IsExit())
     {
-        result = app.RunOnce(true);
+        result = app.RunOnce(true, true);
     }
     return 0;
 }

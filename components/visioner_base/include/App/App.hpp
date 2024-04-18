@@ -17,7 +17,7 @@ class App
 {
 public:
     App(FaceInterface *face, InputInterface *input);
-    virtual int RunOnce(bool less_confused = false);
+    virtual int RunOnce(bool show_result = true, bool less_confused = false);
     virtual void Intro();
     virtual void Delay(int ms) = 0;
     ~App() = default;
@@ -28,8 +28,8 @@ protected:
     InputInterface *m_input;
     
 private:
-    virtual int FindGoodObjects();
-    virtual int FindBadObjects();
+    virtual int FindGoodObjects(bool show_result = true);
+    virtual int FindBadObjects(bool show_result = true);
     virtual void PreFindAction();
 
 };
