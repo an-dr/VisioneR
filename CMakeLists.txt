@@ -13,6 +13,9 @@ include(ab.cmake)
 add_main_component(VisionerFile SOURCE_DIR "src/VisionerFile")
 target_link_libraries(VisionerFile PRIVATE ${OpenCV_LIBS})
 
+add_main_component(VisionerWebcam SOURCE_DIR "src/VisionerWebcam")
+target_link_libraries(VisionerWebcam PRIVATE ${OpenCV_LIBS})
+
 # Install
 install(TARGETS VisionerFile
         DESTINATION .)
