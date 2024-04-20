@@ -19,6 +19,9 @@
 #include <opencv2/opencv_modules.hpp>
 #include <stdio.h>
 
+#include "tools.hpp"
+#include "Tetrangle.hpp"
+
 #include "ObjectFinder.hpp"
 
 using namespace cv;
@@ -33,31 +36,31 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
         return false;
     }
 
-    DetectKeypoints("Object", m_objectImg, m_objectKeypoints, false);
-    ComputeDescriptors("Object", m_objectImg, m_objectKeypoints, m_objectDescriptors);
+    _DetectKeypoints("Object", m_objectImg, m_objectKeypoints, false);
+    _ComputeDescriptors("Object", m_objectImg, m_objectKeypoints, m_objectDescriptors);
 
-    DetectKeypoints("Scene", m_sceneImg, m_sceneKeypoints);
-    ComputeDescriptors("Scene", m_sceneImg, m_sceneKeypoints, m_sceneDescriptors);
+    _DetectKeypoints("Scene", m_sceneImg, m_sceneKeypoints);
+    _ComputeDescriptors("Scene", m_sceneImg, m_sceneKeypoints, m_sceneDescriptors);
 
     bool useBFMatcher = true;
 
     // Match descriptors
     Mat results, dists;
     vector<vector<DMatch>> matches;
-    MatchDescriptors(results, dists, matches, useBFMatcher);
+    _MatchDescriptors(results, dists, matches, useBFMatcher);
 
     // Find good matches
     vector<Point2f> src_points, dst_points;
     vector<int> src_point_idxs, dst_point_idxs;
     vector<uchar> outlier_mask;
-    FindGoodMatches(results, dists, matches,
-                    src_points, dst_points, src_point_idxs, dst_point_idxs,
-                    outlier_mask, useBFMatcher);
+    _FindGoodMatches(results, dists, matches,
+                     src_points, dst_points, src_point_idxs, dst_point_idxs,
+                     outlier_mask, useBFMatcher);
 
     // Find homography
     Mat H;
     bool result = false;
-    result = FindHomography(src_points, dst_points, outlier_mask, H, 20);
+    result = _FindHomography(src_points, dst_points, outlier_mask, H, 20);
     if (!result)
     {
         printf("Error: homography not found\n");
@@ -65,7 +68,7 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
     }
 
     // Get result
-    result = GetResult(m_objectImg, m_sceneImg, H, out_result, show_result);
+    result = _GetResult(m_objectImg, m_sceneImg, H, out_result, show_result);
     if (!result)
     {
         printf("Error: result not found\n");
@@ -85,10 +88,10 @@ bool ObjectFinder::SetScene(cv::Mat &sceneImg)
     return true;
 }
 
-bool ObjectFinder::DetectKeypoints(string image_name,
-                                   Mat &img,
-                                   vector<KeyPoint> &keypoints,
-                                   bool show)
+bool ObjectFinder::_DetectKeypoints(string image_name,
+                                    Mat &img,
+                                    vector<KeyPoint> &keypoints,
+                                    bool show)
 {
     Ptr<FeatureDetector> detector;
 #if CV_MAJOR_VERSION == 2
@@ -114,7 +117,8 @@ bool ObjectFinder::DetectKeypoints(string image_name,
     {
         // Draw keypoints
         Mat img_keypoints = img.clone();
-        drawKeypoints(img_keypoints, keypoints, img_keypoints, Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        drawKeypoints(img_keypoints, keypoints, img_keypoints,
+                      Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
         // show
         imshow("Keypoints", img_keypoints);
         waitKey(1500);
@@ -122,7 +126,10 @@ bool ObjectFinder::DetectKeypoints(string image_name,
     return true;
 }
 
-bool ObjectFinder::ComputeDescriptors(string image_name, Mat &img, vector<KeyPoint> &keypoints, Mat &descriptors, bool show)
+bool ObjectFinder::_ComputeDescriptors(string image_name,
+                                       Mat &img,
+                                       vector<KeyPoint> &keypoints,
+                                       Mat &descriptors)
 {
     if (keypoints.size() == 0)
     {
@@ -151,7 +158,8 @@ bool ObjectFinder::ComputeDescriptors(string image_name, Mat &img, vector<KeyPoi
     return true;
 }
 
-bool ObjectFinder::MatchDescriptors(Mat &results, Mat &dists, vector<vector<DMatch>> &matches, bool useBFMatcher)
+bool ObjectFinder::_MatchDescriptors(Mat &results, Mat &dists,
+                                     vector<vector<DMatch>> &matches, bool useBFMatcher)
 {
     int k = 2; // find the 2 nearest neighbors
     if (m_objectDescriptors.type() == CV_8U)
@@ -160,13 +168,16 @@ bool ObjectFinder::MatchDescriptors(Mat &results, Mat &dists, vector<vector<DMat
         printf("Binary descriptors detected...\n");
         if (useBFMatcher)
         {
-            BFMatcher matcher(NORM_HAMMING); // use NORM_HAMMING2 for ORB descriptor with WTA_K == 3 or 4 (see ORB constructor)
+            // use NORM_HAMMING2 for ORB descriptor with WTA_K == 3 or 4 (see ORB constructor)
+            BFMatcher matcher(NORM_HAMMING);
             matcher.knnMatch(m_objectDescriptors, m_sceneDescriptors, matches, k);
         }
         else
         {
             // Create Flann LSH index
-            flann::Index flannIndex(m_sceneDescriptors, flann::LshIndexParams(12, 20, 2), cvflann::FLANN_DIST_HAMMING);
+            flann::Index flannIndex(m_sceneDescriptors,
+                                    flann::LshIndexParams(12, 20, 2),
+                                    cvflann::FLANN_DIST_HAMMING);
             printf("Creating FLANN LSH index is done\n");
 
             // search (nearest neighbor)
@@ -185,11 +196,14 @@ bool ObjectFinder::MatchDescriptors(Mat &results, Mat &dists, vector<vector<DMat
         else
         {
             // Create Flann KDTree index
-            flann::Index flannIndex(m_sceneDescriptors, flann::KDTreeIndexParams(), cvflann::FLANN_DIST_EUCLIDEAN);
+            flann::Index flannIndex(m_sceneDescriptors,
+                                    flann::KDTreeIndexParams(),
+                                    cvflann::FLANN_DIST_EUCLIDEAN);
             // printf("Time creating FLANN KDTree index = %lld ms\n", 0LL);
 
             // search (nearest neighbor)
-            flannIndex.knnSearch(m_objectDescriptors, results, dists, k, flann::SearchParams());
+            flannIndex.knnSearch(m_objectDescriptors, results, dists, k,
+                                 flann::SearchParams());
         }
     }
     // printf("Time nearest neighbor search = %lld ms\n", 0LL);
@@ -204,15 +218,15 @@ bool ObjectFinder::MatchDescriptors(Mat &results, Mat &dists, vector<vector<DMat
     return true;
 }
 
-bool ObjectFinder::FindGoodMatches(Mat &results,
-                                   Mat &dists,
-                                   vector<vector<DMatch>> &matches,
-                                   vector<Point2f> &src_points,
-                                   vector<Point2f> &dst_points,
-                                   vector<int> &src_point_idxs,
-                                   vector<int> &dst_point_idxs,
-                                   vector<uchar> &outlier_mask,
-                                   bool useBFMatcher)
+bool ObjectFinder::_FindGoodMatches(Mat &results,
+                                    Mat &dists,
+                                    vector<vector<DMatch>> &matches,
+                                    vector<Point2f> &src_points,
+                                    vector<Point2f> &dst_points,
+                                    vector<int> &src_point_idxs,
+                                    vector<int> &dst_point_idxs,
+                                    vector<uchar> &outlier_mask,
+                                    bool useBFMatcher)
 {
     // Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
     float nndrRatio = 0.8f;
@@ -256,11 +270,11 @@ bool ObjectFinder::FindGoodMatches(Mat &results,
     return true;
 }
 
-bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
-                                  vector<Point2f> &dst_points,
-                                  vector<uchar> &outlier_mask,
-                                  Mat &H,
-                                  unsigned int minInliers)
+bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
+                                   vector<Point2f> &dst_points,
+                                   vector<uchar> &outlier_mask,
+                                   Mat &H,
+                                   unsigned int minInliers)
 {
     bool result = false;
 
@@ -294,111 +308,47 @@ bool ObjectFinder::FindHomography(vector<Point2f> &src_points,
     return result;
 }
 
-bool ObjectFinder::GetResult(cv::Mat &objectImg,
-                             cv::Mat &sceneImg,
-                             cv::Mat &H,
-                             cv::Point2f &out_center,
-                             bool show)
+bool ObjectFinder::_GetResult(cv::Mat &objectImg,
+                              cv::Mat &sceneImg,
+                              cv::Mat &H,
+                              cv::Point2f &out_center,
+                              bool show)
 {
     //-- Get the corners from the image_1 ( the object to be "detected" )
-    std::vector<Point2f> obj_corners(4);
-    obj_corners[0] = Point2f(0, 0);
-    obj_corners[1] = Point2f((float)objectImg.cols, 0);
-    obj_corners[2] = Point2f((float)objectImg.cols, (float)objectImg.rows);
-    obj_corners[3] = Point2f(0, (float)objectImg.rows);
+    Tetrangle obj_corners(Point2f(0, 0),
+                          Point2f((float)objectImg.cols, 0),
+                          Point2f((float)objectImg.cols, (float)objectImg.rows),
+                          Point2f(0, (float)objectImg.rows));
+    Tetrangle scene_corners;
 
-    std::vector<Point2f> scene_corners(4);
-    try{
-        perspectiveTransform(obj_corners, scene_corners, H);
-    } catch (...) {
-        return false;
+    // Catch exception if transformation is not possible
+    try
+    {
+        perspectiveTransform(obj_corners.arr, scene_corners.arr, H);
     }
-
-    if (!VerifySize(scene_corners[0], scene_corners[1],
-                    scene_corners[2], scene_corners[3], 20))
+    catch (...)
     {
         return false;
     }
 
-    // Center
-    bool result = CalculateLinesIntersection(scene_corners[0], scene_corners[2],
-                                             scene_corners[1], scene_corners[3],
-                                             out_center);
-    if (!result)
+    // Verify Tetrangle Size
+    if (scene_corners.GetArea() >= 200)
     {
-        printf("Error: cannot calculate center\n");
-        return false;
+        out_center = scene_corners.GetCenter();
+        printf("Center: (%.2f, %.2f)\n", out_center.x, out_center.y);
+
+        if (show)
+        {
+            Mat sceneImgCopy = sceneImg.clone();
+            DrawTetrangle(sceneImgCopy,
+                          scene_corners[0], scene_corners[1],
+                          scene_corners[2], scene_corners[3],
+                          true);
+            imshow("Scene", sceneImgCopy);
+            waitKey(1);
+        }
+
+        return true;
     }
-
-    printf("Center: (%.2f, %.2f)\n", out_center.x, out_center.y);
-
-
-    if (show)
-    {
-        Mat sceneImgCopy = sceneImg.clone();
-        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-        line(sceneImgCopy, scene_corners[0], scene_corners[1], Scalar(0, 255, 0), 4);
-        line(sceneImgCopy, scene_corners[1], scene_corners[2], Scalar(0, 255, 0), 4);
-        line(sceneImgCopy, scene_corners[2], scene_corners[3], Scalar(0, 255, 0), 4);
-        line(sceneImgCopy, scene_corners[3], scene_corners[0], Scalar(0, 255, 0), 4);
-        // Cross
-        line(sceneImgCopy, scene_corners[0], scene_corners[2], Scalar(0, 255, 0), 4);
-        line(sceneImgCopy, scene_corners[3], scene_corners[1], Scalar(0, 255, 0), 4);
-
-        imshow("Scene", sceneImgCopy);
-        waitKey(1);
-    }
-
-    return true;
-}
-
-bool ObjectFinder::CalculateLinesIntersection(cv::Point2f &p1, cv::Point2f &p2, cv::Point2f &p3, cv::Point2f &p4, cv::Point2f &r)
-{
-    float x1 = p1.x, y1 = p1.y, x2 = p2.x, y2 = p2.y;
-    float x3 = p3.x, y3 = p3.y, x4 = p4.x, y4 = p4.y;
-
-    // Solving using y = ax + b for two lines
-    float a1 = (y2 - y1) / (x2 - x1);
-    float b1 = y1 - a1 * x1;
-    float a2 = (y4 - y3) / (x4 - x3);
-    float b2 = y3 - a2 * x3;
-
-    if (a1 == a2)
-    {
-        printf("Error: parallel lines\n");
-        return false;
-    }
-
-    r.x = (b2 - b1) / (a1 - a2);
-    r.y = a1 * r.x + b1;
-    return true;
-}
-
-float ObjectFinder::CalculateDistance(cv::Point2f &p1, cv::Point2f &p2)
-{
-    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
-}
-
-bool ObjectFinder::VerifySize(cv::Point2f &p1, cv::Point2f &p2, cv::Point2f &p3, cv::Point2f &p4, float minSize)
-{
-    float d1 = CalculateDistance(p1, p2);
-    float d2 = CalculateDistance(p2, p3);
-    float d3 = CalculateDistance(p3, p4);
-    float d4 = CalculateDistance(p4, p1);
-
-    float min = d1;
-    if (d2 < min)
-        min = d2;
-    if (d3 < min)
-        min = d3;
-    if (d4 < min)
-        min = d4;
-
-    if (min < minSize)
-    {
-        printf("Error: object is too small\n");
-        return false;
-    }
-    printf("Min object dimension: %.2f\n", min);
-    return true;
+    return false;
 }
