@@ -72,11 +72,25 @@
                 "command": "cmake",
                 "args": [
                     "--build",
+                    "${workspaceFolder}/build"
+                ],
+                "group": {
+                    "kind": "build",
+                    "isDefault": true
+                },
+                "problemMatcher": []
+            },
+            // Cmake build
+            {
+                "label": "Configure",
+                "type": "shell",
+                "command": "cmake",
+                "args": [
+                    "-G",
+                    "Ninja",
+                    "-B",
                     "${workspaceFolder}/build",
-                    "--target",
-                    "all",
-                    "--config",
-                    "Release"
+                    "-DCMAKE_BUILD_TYPE=Debug"
                 ],
                 "group": {
                     "kind": "build",
