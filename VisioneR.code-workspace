@@ -34,7 +34,7 @@
                         "value": ""
                     }
                 ]
-            }
+            },
             {
                 "name": "Debug - VisionerWebcam",
                 "type": "cppdbg",

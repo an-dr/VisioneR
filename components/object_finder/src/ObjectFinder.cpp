@@ -19,8 +19,10 @@
 #include <opencv2/opencv_modules.hpp>
 #include <stdio.h>
 
-#include "tools.hpp"
 #include "Tetrangle.hpp"
+#include "opencv_tools.hpp"
+#include "tools.hpp"
+#include "ulog.h"
 
 #include "ObjectFinder.hpp"
 
@@ -32,7 +34,7 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
     m_objectImg = objectImg;
     if (m_objectImg.empty() || m_sceneImg.empty())
     {
-        printf("Error: empty images\n");
+        log_error("Empty images");
         return false;
     }
 
@@ -63,7 +65,7 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
     result = _FindHomography(src_points, dst_points, outlier_mask, H, 20);
     if (!result)
     {
-        printf("Error: homography not found\n");
+        log_error("homography not found");
         return false;
     }
 
@@ -71,7 +73,7 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
     result = _GetResult(m_objectImg, m_sceneImg, H, out_result, show_result);
     if (!result)
     {
-        printf("Error: result not found\n");
+        log_warn("Result not found");
         return result;
     }
     return result;
@@ -81,7 +83,7 @@ bool ObjectFinder::SetScene(cv::Mat &sceneImg)
 {
     if (sceneImg.empty())
     {
-        printf("Error: empty/no image\n");
+        log_error("Empty/no image");
         return false;
     }
     m_sceneImg = sceneImg;
@@ -93,25 +95,11 @@ bool ObjectFinder::_DetectKeypoints(string image_name,
                                     vector<KeyPoint> &keypoints,
                                     bool show)
 {
-    Ptr<FeatureDetector> detector;
-#if CV_MAJOR_VERSION == 2
-    // detector = Ptr(new DenseFeatureDetector());
-    // detector = Ptr(new FastFeatureDetector());
-    // detector = Ptr(new GFTTDetector());
-    // detector = Ptr(new MSER());
-    // detector = Ptr(new ORB());
-    detector = Ptr<FeatureDetector>(new SIFT());
-    // detector = Ptr(new StarFeatureDetector());
-    // detector = Ptr(new SURF(600.0));
-    // detector = Ptr(new BRISK());
-#elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
-    detector = xfeatures2d::SIFT::create();
-#else // >= 4.3.0
-    detector = SIFT::create();
-#endif
+    Ptr<FeatureDetector> detector = getFeatureDetector();
     detector->detect(img, keypoints);
-    printf("[%s] %d keypoints detected\n", image_name.c_str(),
-           (int)keypoints.size());
+
+    log_debug("[%s] %d keypoints detected", image_name.c_str(),
+             (int)keypoints.size());
 
     if (show)
     {
@@ -133,26 +121,13 @@ bool ObjectFinder::_ComputeDescriptors(string image_name,
 {
     if (keypoints.size() == 0)
     {
-        printf("[%s] Error: no keypoints\n", image_name.c_str());
+        log_error("[%s]: no keypoints", image_name.c_str());
         return false;
     }
 
-    Ptr<DescriptorExtractor> extractor;
-#if CV_MAJOR_VERSION == 2
-    // The extractor can be any of (see OpenCV features2d.hpp):
-    // extractor = Ptr(new BriefDescriptorExtractor());
-    // extractor = Ptr(new ORB());
-    extractor = Ptr<DescriptorExtractor>(new SIFT());
-    // extractor = Ptr(new SURF(600.0));
-    // extractor = Ptr(new BRISK());
-    // extractor = Ptr(new FREAK());
-#elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
-    extractor = xfeatures2d::SIFT::create();
-#else // >= 4.3.0
-    extractor = SIFT::create();
-#endif
+    Ptr<DescriptorExtractor> extractor = getDescriptorExtractor();
     extractor->compute(img, keypoints, descriptors);
-    printf("[%s] %d descriptors extracted\n",
+    log_debug("[%s] %d descriptors extracted",
            image_name.c_str(),
            descriptors.rows);
     return true;
@@ -165,7 +140,7 @@ bool ObjectFinder::_MatchDescriptors(Mat &results, Mat &dists,
     if (m_objectDescriptors.type() == CV_8U)
     {
         // Binary descriptors detected (from ORB, Brief, BRISK, FREAK)
-        printf("Binary descriptors detected...\n");
+        log_trace("Binary descriptors detected...");
         if (useBFMatcher)
         {
             // use NORM_HAMMING2 for ORB descriptor with WTA_K == 3 or 4 (see ORB constructor)
@@ -178,7 +153,7 @@ bool ObjectFinder::_MatchDescriptors(Mat &results, Mat &dists,
             flann::Index flannIndex(m_sceneDescriptors,
                                     flann::LshIndexParams(12, 20, 2),
                                     cvflann::FLANN_DIST_HAMMING);
-            printf("Creating FLANN LSH index is done\n");
+            log_debug("Creating FLANN LSH index is done");
 
             // search (nearest neighbor)
             flannIndex.knnSearch(m_objectDescriptors, results, dists, k, flann::SearchParams());
@@ -187,7 +162,7 @@ bool ObjectFinder::_MatchDescriptors(Mat &results, Mat &dists,
     else
     {
         // assume it is CV_32F
-        printf("Float descriptors detected...\n");
+        log_trace("Float descriptors detected...");
         if (useBFMatcher)
         {
             BFMatcher matcher(NORM_L2);
@@ -199,14 +174,14 @@ bool ObjectFinder::_MatchDescriptors(Mat &results, Mat &dists,
             flann::Index flannIndex(m_sceneDescriptors,
                                     flann::KDTreeIndexParams(),
                                     cvflann::FLANN_DIST_EUCLIDEAN);
-            // printf("Time creating FLANN KDTree index = %lld ms\n", 0LL);
+            log_trace("Time creating FLANN KDTree index = %lld ms", 0LL);
 
             // search (nearest neighbor)
             flannIndex.knnSearch(m_objectDescriptors, results, dists, k,
                                  flann::SearchParams());
         }
     }
-    // printf("Time nearest neighbor search = %lld ms\n", 0LL);
+    log_trace("Time nearest neighbor search = %lld ms", 0LL);
 
     // Conversion to CV_32F if needed
     if (dists.type() == CV_32S)
@@ -236,7 +211,7 @@ bool ObjectFinder::_FindGoodMatches(Mat &results,
         for (int i = 0; i < m_objectDescriptors.rows; ++i)
         {
             // Apply NNDR
-            // printf("q=%d dist1=%f dist2=%f\n", i, dists.at<float>(i,0), dists.at<float>(i,1));
+            log_trace("q=%d dist1=%f dist2=%f", i, dists.at<float>(i,0), dists.at<float>(i,1));
             if (results.at<int>(i, 0) >= 0 &&
                 results.at<int>(i, 1) >= 0 &&
                 dists.at<float>(i, 0) <= nndrRatio * dists.at<float>(i, 1))
@@ -254,7 +229,7 @@ bool ObjectFinder::_FindGoodMatches(Mat &results,
         for (unsigned int i = 0; i < matches.size(); ++i)
         {
             // Apply NNDR
-            // printf("q=%d dist1=%f dist2=%f\n", matches.at(i).at(0).queryIdx, matches.at(i).at(0).distance, matches.at(i).at(1).distance);
+            log_trace("q=%d dist1=%f dist2=%f", matches.at(i).at(0).queryIdx, matches.at(i).at(0).distance, matches.at(i).at(1).distance);
             if (matches.at(i).size() == 2 &&
                 matches.at(i).at(0).distance <= nndrRatio * matches.at(i).at(1).distance)
             {
@@ -266,7 +241,7 @@ bool ObjectFinder::_FindGoodMatches(Mat &results,
             }
         }
     }
-    printf("%d good matches found\n", (int)src_points.size());
+    log_debug("%d good matches found", (int)src_points.size());
     return true;
 }
 
@@ -298,12 +273,12 @@ bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
                 ++outliers;
             }
         }
-        printf("Inliers=%d Outliers=%d\n", inliers, outliers);
+        log_debug("Inliers=%d Outliers=%d", inliers, outliers);
         result = true;
     }
     else
     {
-        printf("Not enough matches (%d) for homography...\n", (int)src_points.size());
+        log_error("Not enough matches (%d) for homography...", (int)src_points.size());
     }
     return result;
 }
@@ -335,7 +310,7 @@ bool ObjectFinder::_GetResult(cv::Mat &objectImg,
     if (scene_corners.GetArea() >= 200)
     {
         out_center = scene_corners.GetCenter();
-        printf("Center: (%.2f, %.2f)\n", out_center.x, out_center.y);
+        log_info("Center: (%.2f, %.2f)", out_center.x, out_center.y);
 
         if (show)
         {

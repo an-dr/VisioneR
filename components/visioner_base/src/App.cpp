@@ -8,6 +8,7 @@
 // *************************************************************************
 
 #include <opencv2/core/core.hpp>
+#include "ulog.h"
 #include "App/App.hpp"
 
 using namespace cv;
@@ -35,13 +36,13 @@ int App::FindGoodObjects(bool show_result)
         if (m_objectFinder.Find(object, result, show_result))
         {
             good_objects++;
-            printf("Good object found: %f %f\n", result.x, result.y);
+            log_info("Good object found: %f %f", result.x, result.y);
         }
         else
         {
-            printf("Good object not found\n");
+            log_info("Good object not found");
         }
-        printf("Good objects found: %d\n", good_objects);
+        log_info("Good objects found: %d", good_objects);
     }
     return good_objects;
 }
@@ -55,13 +56,13 @@ int App::FindBadObjects(bool show_result)
         if (m_objectFinder.Find(object, result, show_result))
         {
             bad_objects++;
-            printf("Bad object found: %f %f\n", result.x, result.y);
+            log_info("Bad object found: %f %f", result.x, result.y);
         }
         else
         {
-            printf("Bad object not found\n");
+            log_info("Bad object not found");
         }
-        printf("Bad objects found: %d\n", bad_objects);
+        log_info("Bad objects found: %d", bad_objects);
     }
     return bad_objects;
 }

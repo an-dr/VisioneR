@@ -9,6 +9,9 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Executable
+add_definitions(-DULOG_HIDE_FILE_STRING)
+add_definitions(-DULOG_SHORT_LEVEL_STRINGS)
+add_definitions(-DULOG_USE_COLOR)
 include(ab.cmake)
 add_main_component(VisionerFile SOURCE_DIR "src/VisionerFile")
 target_link_libraries(VisionerFile PRIVATE ${OpenCV_LIBS})
