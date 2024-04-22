@@ -33,14 +33,16 @@ int App::FindGoodObjects(bool show_result)
     for (auto &object : m_input->GetGoodObjects())
     {
         Point2f result;
-        if (m_objectFinder.Find(object, result, show_result))
+        Quadrilateral obj = m_objectFinder.Find(object);
+        if (obj.GetPerimeter() > 0)
         {
+            result = obj.GetCenter();
             good_objects++;
-            log_info("Good object found: %f %f", result.x, result.y);
+            log_info("👍 Good object found: %f %f", result.x, result.y);
         }
         else
         {
-            log_info("Good object not found");
+            log_debug("Good object not found");
         }
         log_info("Good objects found: %d", good_objects);
     }
@@ -53,14 +55,16 @@ int App::FindBadObjects(bool show_result)
     for (auto &object : m_input->GetBadObjects())
     {
         Point2f result;
-        if (m_objectFinder.Find(object, result, show_result))
+        Quadrilateral obj = m_objectFinder.Find(object);
+        if (obj.GetPerimeter() > 0)
         {
+            result = obj.GetCenter();
             bad_objects++;
-            log_info("Bad object found: %f %f", result.x, result.y);
+            log_info("👎 Bad object found: %f %f", result.x, result.y);
         }
         else
         {
-            log_info("Bad object not found");
+            log_debug("Bad object not found");
         }
         log_info("Bad objects found: %d", bad_objects);
     }

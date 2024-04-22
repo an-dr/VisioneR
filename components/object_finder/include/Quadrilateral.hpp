@@ -6,6 +6,7 @@
 // e-mail:  mail@agramakov.me
 //
 // *************************************************************************
+#pragma once
 
 #include <opencv2/opencv.hpp>
 #include <array>
@@ -13,18 +14,23 @@
 using namespace cv;
 using namespace std;
 
-class Tetrangle
+class Quadrilateral
 {
 public:
-    Tetrangle() = default; 
-    Tetrangle(Point2f p1, Point2f p2, Point2f p3, Point2f p4);
+    Quadrilateral() = default; 
+    Quadrilateral(Point2f p1, Point2f p2, Point2f p3, Point2f p4);
     Point2f GetCenter();
+    array<float, 4>GetSides();
     float GetArea();
-    array<Point2f, 4> arr;
+    float GetPerimeter();
     
     // overload operator []
     Point2f &operator[](int i);
     const Point2f &operator[](int i) const;
+
+    array<Point2f, 4> arr;
     
+private:
+    float _GetDistance(Point2f &p_a, Point2f &p_b);
     
 };

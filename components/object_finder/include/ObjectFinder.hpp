@@ -13,50 +13,50 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
+#include "Quadrilateral.hpp"
+
 class ObjectFinder
 {
 public:
-    bool Find(cv::Mat &objectImg, cv::Point2f &out_result, bool show_result = true);
-    const cv::Mat & GetScene() const { return m_sceneImg; }
+    Quadrilateral Find(Mat &objectImg);
+    const cv::Mat &GetScene() const { return m_sceneImg; }
     bool SetScene(cv::Mat &sceneImg);
 
 private:
     bool _DetectKeypoints(std::string image_name,
-                         cv::Mat &img,
-                         std::vector<cv::KeyPoint> &keypoints,
-                         bool show = false);
+                          cv::Mat &img,
+                          std::vector<cv::KeyPoint> &keypoints,
+                          bool show = false);
 
     bool _ComputeDescriptors(std::string image_name,
-                            cv::Mat &img,
-                            std::vector<cv::KeyPoint> &keypoints,
-                            cv::Mat &descriptors);
+                             cv::Mat &img,
+                             std::vector<cv::KeyPoint> &keypoints,
+                             cv::Mat &descriptors);
 
     bool _MatchDescriptors(cv::Mat &results,
-                          cv::Mat &dists,
-                          std::vector<std::vector<cv::DMatch>> &matches,
-                          bool useBFMatcher = false);
+                           cv::Mat &dists,
+                           std::vector<std::vector<cv::DMatch>> &matches,
+                           bool useBFMatcher = false);
 
     bool _FindGoodMatches(cv::Mat &results,
-                         cv::Mat &dists,
-                         std::vector<std::vector<cv::DMatch>> &matches,
-                         std::vector<cv::Point2f> &src_points,
-                         std::vector<cv::Point2f> &dst_points,
-                         std::vector<int> &src_point_idxs,
-                         std::vector<int> &dst_point_idxs,
-                         std::vector<uchar> &outlier_mask,
-                         bool useBFMatcher = false);
+                          cv::Mat &dists,
+                          std::vector<std::vector<cv::DMatch>> &matches,
+                          std::vector<cv::Point2f> &src_points,
+                          std::vector<cv::Point2f> &dst_points,
+                          std::vector<int> &src_point_idxs,
+                          std::vector<int> &dst_point_idxs,
+                          std::vector<uchar> &outlier_mask,
+                          bool useBFMatcher = false);
 
     bool _FindHomography(std::vector<cv::Point2f> &src_points,
-                        std::vector<cv::Point2f> &dst_points,
-                        std::vector<uchar> &outlier_mask,
-                        cv::Mat &H,
-                        unsigned int minInliers = 8);
+                         std::vector<cv::Point2f> &dst_points,
+                         std::vector<uchar> &outlier_mask,
+                         cv::Mat &H,
+                         unsigned int minInliers = 8);
 
-    bool _GetResult(cv::Mat &objectImg,
-                   cv::Mat &sceneImg,
-                   cv::Mat &H,
-                   cv::Point2f &out_center,
-                   bool show = false);
+    Quadrilateral _GetObjectRectangle(cv::Mat &objectImg,
+                         cv::Mat &sceneImg,
+                         cv::Mat &H);
 
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;

@@ -25,7 +25,7 @@ bool VerifyTetrangleSize(cv::Point2f &p1,
                         cv::Point2f &p4,
                         float minSize);
 
-void DrawTetrangle(cv::Mat &img,
+void DrawQuadrilateral(cv::Mat &img,
                   cv::Point2f &p1,
                   cv::Point2f &p2,
                   cv::Point2f &p3,

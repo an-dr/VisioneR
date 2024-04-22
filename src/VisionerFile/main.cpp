@@ -31,6 +31,7 @@ int main(int argc, char **argv)
     {
         result = app.RunOnce();
         // # delay 1000 ms
+        printf("\n");
         app.Delay(3000);
     }
     return 0;

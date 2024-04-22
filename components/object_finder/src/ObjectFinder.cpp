@@ -19,7 +19,7 @@
 #include <opencv2/opencv_modules.hpp>
 #include <stdio.h>
 
-#include "Tetrangle.hpp"
+#include "Quadrilateral.hpp"
 #include "opencv_tools.hpp"
 #include "tools.hpp"
 #include "ulog.h"
@@ -29,13 +29,13 @@
 using namespace cv;
 using namespace std;
 
-bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
+Quadrilateral ObjectFinder::Find(Mat &objectImg)
 {
     m_objectImg = objectImg;
     if (m_objectImg.empty() || m_sceneImg.empty())
     {
         log_error("Empty images");
-        return false;
+        return Quadrilateral();
     }
 
     _DetectKeypoints("Object", m_objectImg, m_objectKeypoints, false);
@@ -66,17 +66,12 @@ bool ObjectFinder::Find(Mat &objectImg, Point2f &out_result, bool show_result)
     if (!result)
     {
         log_error("homography not found");
-        return false;
+        return Quadrilateral();
     }
 
     // Get result
-    result = _GetResult(m_objectImg, m_sceneImg, H, out_result, show_result);
-    if (!result)
-    {
-        log_warn("Result not found");
-        return result;
-    }
-    return result;
+    Quadrilateral found_object = _GetObjectRectangle(m_objectImg, m_sceneImg, H);
+    return found_object;
 }
 
 bool ObjectFinder::SetScene(cv::Mat &sceneImg)
@@ -283,18 +278,16 @@ bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
     return result;
 }
 
-bool ObjectFinder::_GetResult(cv::Mat &objectImg,
+Quadrilateral ObjectFinder::_GetObjectRectangle(cv::Mat &objectImg,
                               cv::Mat &sceneImg,
-                              cv::Mat &H,
-                              cv::Point2f &out_center,
-                              bool show)
+                              cv::Mat &H)
 {
     //-- Get the corners from the image_1 ( the object to be "detected" )
-    Tetrangle obj_corners(Point2f(0, 0),
+    Quadrilateral obj_corners(Point2f(0, 0),
                           Point2f((float)objectImg.cols, 0),
                           Point2f((float)objectImg.cols, (float)objectImg.rows),
                           Point2f(0, (float)objectImg.rows));
-    Tetrangle scene_corners;
+    Quadrilateral scene_corners;
 
     // Catch exception if transformation is not possible
     try
@@ -303,27 +296,28 @@ bool ObjectFinder::_GetResult(cv::Mat &objectImg,
     }
     catch (...)
     {
-        return false;
+        return Quadrilateral();
     }
 
-    // Verify Tetrangle Size
-    if (scene_corners.GetArea() >= 200)
-    {
-        out_center = scene_corners.GetCenter();
-        log_info("Center: (%.2f, %.2f)", out_center.x, out_center.y);
+    return scene_corners;
+    // // Verify Quadrilateral Size
+    // if (scene_corners.GetArea() >= 200)
+    // {
+    //     out_center = scene_corners.GetCenter();
+    //     log_debug("Center: (%.2f, %.2f)", out_center.x, out_center.y);
 
-        if (show)
-        {
-            Mat sceneImgCopy = sceneImg.clone();
-            DrawTetrangle(sceneImgCopy,
-                          scene_corners[0], scene_corners[1],
-                          scene_corners[2], scene_corners[3],
-                          true);
-            imshow("Scene", sceneImgCopy);
-            waitKey(1);
-        }
+    //     if (show)
+    //     {
+    //         Mat sceneImgCopy = sceneImg.clone();
+    //         DrawQuadrilateral(sceneImgCopy,
+    //                       scene_corners[0], scene_corners[1],
+    //                       scene_corners[2], scene_corners[3],
+    //                       true);
+    //         imshow("Scene", sceneImgCopy);
+    //         waitKey(1);
+    //     }
 
-        return true;
-    }
-    return false;
+    //     return true;
+    // }
+    // return false;
 }

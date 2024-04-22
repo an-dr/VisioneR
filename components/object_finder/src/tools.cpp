@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 
-#include "Tetrangle.hpp"
+#include "Quadrilateral.hpp"
 #include "tools.hpp"
 
 float CalculateDistance(cv::Point2f &p_a, cv::Point2f &p_b)
@@ -68,14 +68,14 @@ bool CalculateLinesIntersection(cv::Point2f &line1_p1, cv::Point2f &line1_p2,
     return true;
 }
 
-void DrawTetrangle(cv::Mat &img,
-                   cv::Point2f &p1,
-                   cv::Point2f &p2,
-                   cv::Point2f &p3,
-                   cv::Point2f &p4,
-                   bool crossed,
-                   cv::Scalar color,
-                   int thickness)
+void DrawQuadrilateral(cv::Mat &img,
+                       cv::Point2f &p1,
+                       cv::Point2f &p2,
+                       cv::Point2f &p3,
+                       cv::Point2f &p4,
+                       bool crossed,
+                       cv::Scalar color,
+                       int thickness)
 {
     cv::line(img, p1, p2, color, thickness);
     cv::line(img, p2, p3, color, thickness);
@@ -89,13 +89,13 @@ void DrawTetrangle(cv::Mat &img,
     }
 }
 
-void DrawTetrangle(cv::Mat &img,
-                   Tetrangle &tetrangle,
-                   bool crossed,
-                   cv::Scalar color,
-                   int thickness)
+void DrawQuadrilateral(cv::Mat &img,
+                       Quadrilateral &quad,
+                       bool crossed,
+                       cv::Scalar color,
+                       int thickness)
 {
-    DrawTetrangle(img,
-                  tetrangle[1], tetrangle[2], tetrangle[3], tetrangle[4],
-                  false, color, thickness);
+    DrawQuadrilateral(img,
+                      quad[1], quad[2], quad[3], quad[4],
+                      false, color, thickness);
 }
