@@ -29,46 +29,42 @@ void App::Intro()
 
 int App::FindGoodObjects(bool show_result)
 {
-    int good_objects = 0;
+    int objects = 0;
     for (auto &object : m_input->GetGoodObjects())
     {
-        Point2f result;
         Quadrilateral obj = m_objectFinder.Find(object);
         if (obj.GetPerimeter() > 0)
         {
-            result = obj.GetCenter();
-            good_objects++;
-            log_info("👍 Good object found: %f %f", result.x, result.y);
+            Point2f center = obj.GetCenter();
+            auto area = obj.GetArea();
+            auto perimeter = obj.GetPerimeter();
+            float a2p = area / perimeter;
+            objects++;
+            log_info("Object! Center: %f-%f. Area/Perimeter: %f",
+                          center.x, center.y, a2p);
         }
-        else
-        {
-            log_debug("Good object not found");
-        }
-        log_info("Good objects found: %d", good_objects);
     }
-    return good_objects;
+    return objects;
 }
 
 int App::FindBadObjects(bool show_result)
 {
-    int bad_objects = 0;
+    int objects = 0;
     for (auto &object : m_input->GetBadObjects())
     {
-        Point2f result;
         Quadrilateral obj = m_objectFinder.Find(object);
         if (obj.GetPerimeter() > 0)
         {
-            result = obj.GetCenter();
-            bad_objects++;
-            log_info("👎 Bad object found: %f %f", result.x, result.y);
+            Point2f center = obj.GetCenter();
+            auto area = obj.GetArea();
+            auto perimeter = obj.GetPerimeter();
+            float a2p = area / perimeter;
+            objects++;
+            log_info("Object! Center: %f-%f. Area/Perimeter: %f",
+                          center.x, center.y, a2p);
         }
-        else
-        {
-            log_debug("Bad object not found");
-        }
-        log_info("Bad objects found: %d", bad_objects);
     }
-    return bad_objects;
+    return objects;
 }
 
 void App::PreFindAction() {}
@@ -81,9 +77,25 @@ int App::RunOnce(bool show_result, bool less_confused)
 
     PreFindAction();
 
+    // Good objects
     int good_objects = FindGoodObjects(show_result);
+    if (good_objects){
+        log_info("👍 Good objects found: %d", good_objects);
+    }
+    else {
+        log_info("No good objects found");
+    }
+    
+    // Bad objects
     int bad_objects = FindBadObjects(show_result);
+    if (bad_objects){
+        log_info("👎 Bad objects found: %d", bad_objects);
+    }
+    else {
+        log_info("No bad objects found");
+    }
 
+    // Reaction
     if (good_objects == 0 && bad_objects == 0)
     {
         if (less_confused)

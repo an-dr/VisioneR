@@ -30,7 +30,6 @@ int main(int argc, char **argv)
     while(!face.IsExit())
     {
         result = app.RunOnce();
-        // # delay 1000 ms
         printf("\n");
         app.Delay(3000);
     }
