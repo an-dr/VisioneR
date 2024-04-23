@@ -9,17 +9,16 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include "InterfaceSceneReader.hpp"
 
-class FileScanner
+class SceneReaderFileSystem : public InterfaceSceneReader
 {
 public:
-    FileScanner(const std::string &path);
+    SceneReaderFileSystem();
+    cv::Mat GetScene() override;
+    ~SceneReaderFileSystem();
 
-    // Get all files in the directory by pattern
-    std::vector<std::string> GetFiles(const std::string &pattern);
-    
 private:
-    std::string m_path;
+    std::vector<cv::Mat> m_scenes;
+    int m_scene_cursor;
 };
