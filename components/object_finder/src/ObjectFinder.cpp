@@ -29,6 +29,20 @@
 using namespace cv;
 using namespace std;
 
+bool ObjectFinder::_ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
+                                  cv::Mat &origObjectImg)
+{
+    float origObjArea = origObjectImg.rows * origObjectImg.cols;
+    float origObjPerimeter = 2 * (origObjectImg.rows + origObjectImg.cols);
+    float origA2P = origObjArea / origObjPerimeter;
+    
+    float sceneObjA2P = sceneObjectQuadrilateral.GetArea() / sceneObjectQuadrilateral.GetPerimeter();
+    
+    // float result = ;
+    log_info("Validation orig A2P vs scene A2P: %f | %f", origA2P, sceneObjA2P);
+    return true;
+}
+
 Quadrilateral ObjectFinder::Find(Mat &objectImg)
 {
     m_objectImg = objectImg;
@@ -71,6 +85,12 @@ Quadrilateral ObjectFinder::Find(Mat &objectImg)
 
     // Get result
     Quadrilateral found_object = _GetObjectRectangle(m_objectImg, m_sceneImg, H);
+    
+    // Check
+    if (!_ValidateObjectQuadrilateral(found_object, m_objectImg))
+    {
+        return Quadrilateral();
+    }
     return found_object;
 }
 
@@ -94,7 +114,7 @@ bool ObjectFinder::_DetectKeypoints(string image_name,
     detector->detect(img, keypoints);
 
     log_debug("[%s] %d keypoints detected", image_name.c_str(),
-             (int)keypoints.size());
+              (int)keypoints.size());
 
     if (show)
     {
@@ -123,8 +143,8 @@ bool ObjectFinder::_ComputeDescriptors(string image_name,
     Ptr<DescriptorExtractor> extractor = getDescriptorExtractor();
     extractor->compute(img, keypoints, descriptors);
     log_debug("[%s] %d descriptors extracted",
-           image_name.c_str(),
-           descriptors.rows);
+              image_name.c_str(),
+              descriptors.rows);
     return true;
 }
 
@@ -206,7 +226,7 @@ bool ObjectFinder::_FindGoodMatches(Mat &results,
         for (int i = 0; i < m_objectDescriptors.rows; ++i)
         {
             // Apply NNDR
-            log_trace("q=%d dist1=%f dist2=%f", i, dists.at<float>(i,0), dists.at<float>(i,1));
+            log_trace("q=%d dist1=%f dist2=%f", i, dists.at<float>(i, 0), dists.at<float>(i, 1));
             if (results.at<int>(i, 0) >= 0 &&
                 results.at<int>(i, 1) >= 0 &&
                 dists.at<float>(i, 0) <= nndrRatio * dists.at<float>(i, 1))
@@ -269,6 +289,9 @@ bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
             }
         }
         log_debug("Inliers=%d Outliers=%d", inliers, outliers);
+        log_trace("H[0][0]=%f \tH[0][1]=%f \tH[0][2]=%f", H.at<double>(0, 0), H.at<double>(0, 1), H.at<double>(0, 2));
+        log_trace("H[1][0]=%f \tH[1][1]=%f \tH[1][2]=%f", H.at<double>(1, 0), H.at<double>(1, 1), H.at<double>(1, 2));
+        log_trace("H[2][0]=%f \tH[2][1]=%f \tH[2][2]=%f", H.at<double>(2, 0), H.at<double>(2, 1), H.at<double>(2, 2));
         result = true;
     }
     else
@@ -279,14 +302,14 @@ bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
 }
 
 Quadrilateral ObjectFinder::_GetObjectRectangle(cv::Mat &objectImg,
-                              cv::Mat &sceneImg,
-                              cv::Mat &H)
+                                                cv::Mat &sceneImg,
+                                                cv::Mat &H)
 {
     //-- Get the corners from the image_1 ( the object to be "detected" )
     Quadrilateral obj_corners(Point2f(0, 0),
-                          Point2f((float)objectImg.cols, 0),
-                          Point2f((float)objectImg.cols, (float)objectImg.rows),
-                          Point2f(0, (float)objectImg.rows));
+                              Point2f((float)objectImg.cols, 0),
+                              Point2f((float)objectImg.cols, (float)objectImg.rows),
+                              Point2f(0, (float)objectImg.rows));
     Quadrilateral scene_corners;
 
     // Catch exception if transformation is not possible
@@ -300,24 +323,4 @@ Quadrilateral ObjectFinder::_GetObjectRectangle(cv::Mat &objectImg,
     }
 
     return scene_corners;
-    // // Verify Quadrilateral Size
-    // if (scene_corners.GetArea() >= 200)
-    // {
-    //     out_center = scene_corners.GetCenter();
-    //     log_debug("Center: (%.2f, %.2f)", out_center.x, out_center.y);
-
-    //     if (show)
-    //     {
-    //         Mat sceneImgCopy = sceneImg.clone();
-    //         DrawQuadrilateral(sceneImgCopy,
-    //                       scene_corners[0], scene_corners[1],
-    //                       scene_corners[2], scene_corners[3],
-    //                       true);
-    //         imshow("Scene", sceneImgCopy);
-    //         waitKey(1);
-    //     }
-
-    //     return true;
-    // }
-    // return false;
 }

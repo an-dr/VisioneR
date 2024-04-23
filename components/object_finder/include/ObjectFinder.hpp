@@ -57,6 +57,9 @@ private:
     Quadrilateral _GetObjectRectangle(cv::Mat &objectImg,
                          cv::Mat &sceneImg,
                          cv::Mat &H);
+                         
+    bool _ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
+                                      cv::Mat &origObjectImg);
 
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;
