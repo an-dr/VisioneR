@@ -15,18 +15,10 @@
 #include <opencv2/opencv.hpp>
 
 
-InputWebcam::InputWebcam():
-    cap(0), m_file_scanner(nullptr)
+InputWebcam::InputWebcam(): m_file_scanner(nullptr)
 {
 }
 
-cv::Mat InputWebcam::GetScene()
-{
-    if(!cap.isOpened())  // check if we succeeded
-        return cv::Mat();
-    cap >> m_scene;
-    return m_scene;
-}
 
 std::vector<cv::Mat>& InputWebcam::GetGoodObjects()
 {

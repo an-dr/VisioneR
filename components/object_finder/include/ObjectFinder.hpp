@@ -61,6 +61,8 @@ private:
     bool _ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
                                       cv::Mat &origObjectImg);
 
+
+    static const int VALIDATION_OBJA2P_VS_SCENEA2P = 10;
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;
 

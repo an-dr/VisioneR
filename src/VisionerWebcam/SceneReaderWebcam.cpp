@@ -7,15 +7,17 @@
 //
 // *************************************************************************
 
-#pragma once
+#include <opencv2/opencv.hpp>
+#include "SceneReaderWebcam.hpp"
 
-#include "App/App.hpp"
-
-class AppVisioner : public App
+SceneReaderWebcam::SceneReaderWebcam() : cap(0)
 {
-public:
-    AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input);
-    void Delay(int ms) override;
-    void PreFindAction() override;
-    ~AppVisioner() = default;
-};
+}
+
+cv::Mat SceneReaderWebcam::GetScene()
+{
+    if (!cap.isOpened()) // check if we succeeded
+        return cv::Mat();
+    cap >> m_scene;
+    return m_scene;
+}

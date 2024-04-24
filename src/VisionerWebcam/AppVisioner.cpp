@@ -16,8 +16,8 @@
 #include "AppVisioner.hpp"
 
 
-AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input)
-    : App(face, input)
+AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input)
+    : App(face, input, scene_input)
 {
 }
 

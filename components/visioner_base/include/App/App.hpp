@@ -12,11 +12,12 @@
 #include "ObjectFinder.hpp"
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
+#include "InterfaceSceneReader.hpp"
 
 class App
 {
 public:
-    App(FaceInterface *face, InputInterface *input);
+    App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input = nullptr);
     virtual int RunOnce(bool show_result = true, bool less_confused = false);
     virtual void Intro();
     virtual void Delay(int ms) = 0;
@@ -26,6 +27,7 @@ protected:
     ObjectFinder m_objectFinder;
     FaceInterface *m_face;
     InputInterface *m_input;
+    InterfaceSceneReader *m_scene_input;
     
 private:
     virtual int FindGoodObjects(bool show_result = true);

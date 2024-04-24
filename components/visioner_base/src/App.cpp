@@ -9,12 +9,13 @@
 
 #include <opencv2/core/core.hpp>
 #include "ulog.h"
+#include "App/InterfaceSceneReader.hpp"
 #include "App/App.hpp"
 
 using namespace cv;
 
-App::App(FaceInterface *face, InputInterface *input)
-    : m_face(face), m_input(input), m_objectFinder()
+App::App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_reader)
+    : m_face(face), m_input(input), m_scene_input(scene_reader), m_objectFinder()
 {
 }
 
@@ -72,7 +73,7 @@ void App::PreFindAction() {}
 int App::RunOnce(bool show_result, bool less_confused)
 {
 
-    auto scene_img = m_input->GetScene();
+    auto scene_img = m_scene_input->GetScene();
     m_objectFinder.SetScene(scene_img);
 
     PreFindAction();

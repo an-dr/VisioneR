@@ -30,16 +30,24 @@ using namespace cv;
 using namespace std;
 
 bool ObjectFinder::_ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
-                                  cv::Mat &origObjectImg)
+                                                cv::Mat &origObjectImg)
 {
+    // Object A2P
     float origObjArea = origObjectImg.rows * origObjectImg.cols;
     float origObjPerimeter = 2 * (origObjectImg.rows + origObjectImg.cols);
     float origA2P = origObjArea / origObjPerimeter;
+
+    // Scene A2P
+    auto sceneObjPerimeter = sceneObjectQuadrilateral.GetPerimeter();
+    sceneObjPerimeter = isnan(sceneObjPerimeter) ? 0 : sceneObjPerimeter;
+    float sceneObjA2P = sceneObjPerimeter == 0 ? 0 : sceneObjectQuadrilateral.GetArea() / sceneObjPerimeter;
+
+    log_debug("Validation orig A2P vs scene A2P: %f | %f", origA2P, sceneObjA2P);
+    if (origA2P / sceneObjA2P > VALIDATION_OBJA2P_VS_SCENEA2P)
+    {
+        return false;
+    }
     
-    float sceneObjA2P = sceneObjectQuadrilateral.GetArea() / sceneObjectQuadrilateral.GetPerimeter();
-    
-    // float result = ;
-    log_info("Validation orig A2P vs scene A2P: %f | %f", origA2P, sceneObjA2P);
     return true;
 }
 
@@ -85,7 +93,7 @@ Quadrilateral ObjectFinder::Find(Mat &objectImg)
 
     // Get result
     Quadrilateral found_object = _GetObjectRectangle(m_objectImg, m_sceneImg, H);
-    
+
     // Check
     if (!_ValidateObjectQuadrilateral(found_object, m_objectImg))
     {

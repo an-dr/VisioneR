@@ -13,6 +13,7 @@
 #include "AppVisioner.hpp"
 #include "Face.hpp"
 #include "InputFiles.hpp"
+#include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
 
 int main(int argc, char **argv)
@@ -20,10 +21,13 @@ int main(int argc, char **argv)
     ulog_set_level(LOG_INFO);
     InputFiles input;
     Face face;
+    SceneReaderFileSystem scene_input;
     face.ShowThinking();
     input.LoadFiles("input");
+    scene_input.SetPath("input");
+    
 
-    AppVisioner app(&face, &input);
+    AppVisioner app(&face, &input, &scene_input);
     
     // Until the face is not exiting
     int result = 0;

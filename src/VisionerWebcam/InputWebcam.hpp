@@ -18,7 +18,6 @@ class InputWebcam : public InputInterface
 {
 public:
     InputWebcam();
-    cv::Mat GetScene() override;
     std::vector<cv::Mat>& GetGoodObjects() override;
     std::vector<cv::Mat>& GetBadObjects() override;
     void LoadFiles(const std::string &path);
@@ -29,6 +28,4 @@ private:
     std::string m_path;
     std::vector<cv::Mat> m_objects_good;
     std::vector<cv::Mat> m_objects_bad;
-    cv::Mat m_scene;
-    cv::VideoCapture cap;
 };

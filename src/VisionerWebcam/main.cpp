@@ -13,15 +13,18 @@
 #include "AppVisioner.hpp"
 #include "Face.hpp"
 #include "InputWebcam.hpp"
+#include "SceneReaderWebcam.hpp"
 
 int main(int argc, char **argv)
 {
     InputWebcam input;
     Face face;
+    SceneReaderWebcam scene_input;
+    
     face.ShowThinking();
     input.LoadFiles("input");
 
-    AppVisioner app(&face, &input);
+    AppVisioner app(&face, &input, &scene_input);
     app.Intro();
     
     // Until the face is not exiting
