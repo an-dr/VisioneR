@@ -11,7 +11,7 @@
 #include "ulog.h"
 #include "App/InterfaceSceneReader.hpp"
 #include "App/App.hpp"
-// #include "Visualizer.hpp"
+#include "Visualizer.hpp"
 
 using namespace cv;
 
@@ -32,20 +32,24 @@ void App::Intro()
 int App::FindObjects(std::vector<cv::Mat> objects, bool show_result)
 {
     int found_objects = 0;
-    // Visualizer vis;
     for (auto &object : objects)
     {
         int obj_num = 0;
         Quadrilateral obj = m_objectFinder.Find(object);
         if (obj.GetPerimeter() > 0)
         {
+            found_objects++;
+            // Remove the object from the scene and update the scene
+            m_current_scene = m_vis.SelectAndDismiss(obj);
+            
+            // Logging
             Point2f center = obj.GetCenter();
             auto area = obj.GetArea();
             auto perimeter = obj.GetPerimeter();
             float a2p = area / perimeter;
-            found_objects++;
             log_info("Object %d! Center: %f-%f. Area/Perimeter: %f",
                           obj_num, center.x, center.y, a2p);
+            
         }
         obj_num++;
     }
@@ -57,12 +61,14 @@ void App::PreFindAction() {}
 int App::RunOnce(bool show_result, bool less_confused)
 {
 
-    auto scene_img = m_scene_input->GetScene();
-    m_objectFinder.SetScene(scene_img);
+    // Set the new scene
+    m_current_scene = m_scene_input->GetScene();
+    m_objectFinder.SetScene(m_current_scene);
+    m_vis.SetImg(m_current_scene);
 
     PreFindAction();
 
-    // Good objects
+    // Find good objects
     int good_objects = FindObjects(m_input->GetGoodObjects(), show_result);
     if (good_objects){
         log_info("👍 Good objects found: %d", good_objects);
@@ -71,13 +77,18 @@ int App::RunOnce(bool show_result, bool less_confused)
         log_info("No good objects found");
     }
     
-    // Bad objects
+    // Find bad objects
     int bad_objects = FindObjects(m_input->GetBadObjects(), show_result);
     if (bad_objects){
         log_info("👎 Bad objects found: %d", bad_objects);
     }
     else {
         log_info("No bad objects found");
+    }
+    
+    // Show
+    if (show_result){
+        imshow("Scene", m_vis.GetSceneWithSelection());
     }
 
     // Reaction

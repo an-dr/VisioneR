@@ -45,6 +45,16 @@ float Quadrilateral::GetPerimeter()
     return sides[0] + sides[1] + sides[2] + sides[3];
 }
 
+vector<Point2i> Quadrilateral::GetIntegerPoints()
+{
+    vector<Point2i> res;
+    for (auto p : arr)
+    {
+        res.push_back(p);
+    }
+    return res;
+}
+
 float Quadrilateral::_GetDistance(Point2f &p_a, Point2f &p_b)
 {
     return sqrt((p_a.x - p_b.x) * (p_a.x - p_b.x) +

@@ -12,14 +12,25 @@
 
 void Visualizer::SetImg(cv::Mat img)
 {
-    m_img_orig = img;
-    m_img_selection = img;
-    m_img_dismissed = img;
+    m_img_orig = img.clone();
+    m_img_selection = img.clone();
+    m_img_dismissed = img.clone();
 }
 
 cv::Mat Visualizer::SelectAndDismiss(Quadrilateral selection)
 {
+    DrawQuadrilateral(m_img_selection, selection, true);
+    ClearQuadrilateral(m_img_dismissed, selection);
+    return m_img_dismissed;
+}
 
+cv::Mat &Visualizer::GetSceneWithSelection()
+{
+    return m_img_selection;
+}
+
+cv::Mat &Visualizer::GetSceneWithoutSelectedObjects()
+{
     return m_img_dismissed;
 }
 
@@ -29,20 +40,20 @@ void Visualizer::DrawQuadrilateral(cv::Mat &img,
                                           cv::Scalar color,
                                           int thickness)
 {
+    cv::line(img, selection[0], selection[1], color, thickness);
     cv::line(img, selection[1], selection[2], color, thickness);
     cv::line(img, selection[2], selection[3], color, thickness);
-    cv::line(img, selection[3], selection[4], color, thickness);
-    cv::line(img, selection[4], selection[1], color, thickness);
+    cv::line(img, selection[3], selection[0], color, thickness);
 
     if (crossed)
     {
+        cv::line(img, selection[0], selection[2], color, thickness);
         cv::line(img, selection[1], selection[3], color, thickness);
-        cv::line(img, selection[2], selection[4], color, thickness);
     }
 }
 
 void Visualizer::ClearQuadrilateral(cv::Mat &img, Quadrilateral selection)
 {
-    cv::fillPoly(img, selection.GetSides(),Scalar(0, 0, 0));
+    cv::fillPoly(img, selection.GetIntegerPoints(),Scalar(128));
     
 }

@@ -18,6 +18,8 @@ public:
     Visualizer() = default;
     void SetImg(cv::Mat img);
     cv::Mat SelectAndDismiss(Quadrilateral selection);
+    cv::Mat & GetSceneWithSelection();
+    cv::Mat & GetSceneWithoutSelectedObjects();
 
 private:
     cv::Mat m_img_orig;

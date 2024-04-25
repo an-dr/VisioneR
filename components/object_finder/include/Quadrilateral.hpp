@@ -10,6 +10,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <array>
+#include <vector>
 
 using namespace cv;
 using namespace std;
@@ -23,6 +24,7 @@ public:
     array<float, 4>GetSides();
     float GetArea();
     float GetPerimeter();
+    vector<Point2i> GetIntegerPoints();
     
     // overload operator []
     Point2f &operator[](int i);

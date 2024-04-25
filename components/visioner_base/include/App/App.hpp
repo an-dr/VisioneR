@@ -13,6 +13,7 @@
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
+#include "Visualizer.hpp"
 
 class App
 {
@@ -28,6 +29,8 @@ protected:
     FaceInterface *m_face;
     InputInterface *m_input;
     InterfaceSceneReader *m_scene_input;
+    cv::Mat m_current_scene;
+    Visualizer m_vis;
     
 private:
     virtual int FindObjects(std::vector<cv::Mat> objects, bool show_result = true);
