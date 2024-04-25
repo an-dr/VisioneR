@@ -32,18 +32,39 @@ using namespace std;
 bool ObjectFinder::_ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
                                                 cv::Mat &origObjectImg, int a2p_ratio)
 {
+    // Validate object quadrilateral is in the scene
+    for (auto p : sceneObjectQuadrilateral.arr)
+    {
+        if (p.x < 0 || p.y < 0 || p.x > m_sceneImg.cols || p.y > m_sceneImg.rows)
+        {
+            return false;
+        }
+    }
+    
     // Object A2P
     float origObjArea = origObjectImg.rows * origObjectImg.cols;
     float origObjPerimeter = 2 * (origObjectImg.rows + origObjectImg.cols);
     float origA2P = origObjArea / origObjPerimeter;
 
-    // Scene A2P
     auto sceneObjPerimeter = sceneObjectQuadrilateral.GetPerimeter();
     sceneObjPerimeter = isnan(sceneObjPerimeter) ? 0 : sceneObjPerimeter;
-    float sceneObjA2P = sceneObjPerimeter == 0 ? 0 : sceneObjectQuadrilateral.GetArea() / sceneObjPerimeter;
+    auto obj_area = sceneObjectQuadrilateral.GetArea();
+    obj_area = isnan(obj_area) ? 0 : obj_area;
+    
+    // Scene A2P
+    float sceneObjA2P = sceneObjPerimeter == 0 ? 0 : obj_area / sceneObjPerimeter;
 
-    log_debug("Validation orig A2P vs scene A2P: %f | %f", origA2P, sceneObjA2P);
+    // log_debug("Validation orig A2P vs scene A2P: %f | %f", origA2P, sceneObjA2P);
+    log_debug("Validation orig A2P / scene A2P: %f", origA2P / sceneObjA2P);
     if (origA2P / sceneObjA2P > a2p_ratio)
+    {
+        return false;
+    }
+    
+    // Obj size
+    auto scene_area = m_sceneImg.rows * m_sceneImg.cols;
+    auto obj_area_ratio = scene_area / obj_area;
+    if (obj_area_ratio > 10)
     {
         return false;
     }
@@ -87,7 +108,7 @@ Quadrilateral ObjectFinder::Find(Mat &objectImg)
     result = _FindHomography(src_points, dst_points, outlier_mask, H, 20);
     if (!result)
     {
-        log_error("homography not found");
+        log_debug("homography not found");
         return Quadrilateral();
     }
 
@@ -304,7 +325,7 @@ bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
     }
     else
     {
-        log_error("Not enough matches (%d) for homography...", (int)src_points.size());
+        log_debug("Not enough matches (%d) for homography...", (int)src_points.size());
     }
     return result;
 }

@@ -47,8 +47,8 @@ int App::FindObjects(std::vector<cv::Mat> objects, bool show_result)
             auto area = obj.GetArea();
             auto perimeter = obj.GetPerimeter();
             float a2p = area / perimeter;
-            log_info("Object %d! Center: %f-%f. Area/Perimeter: %f",
-                          obj_num, center.x, center.y, a2p);
+            log_info("Object %d! Center: %f-%f. Area:%f. Area/Perimeter: %f",
+                          obj_num, center.x, center.y, area, a2p);
             
         }
         obj_num++;

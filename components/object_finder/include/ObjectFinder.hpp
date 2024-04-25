@@ -59,10 +59,10 @@ private:
                          cv::Mat &H);
                          
     bool _ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
-                                      cv::Mat &origObjectImg, int a2p_ratio = 10);
+                                      cv::Mat &origObjectImg, int a2p_ratio = VALIDATION_OBJA2P_VS_SCENEA2P);
 
 
-    static const int VALIDATION_OBJA2P_VS_SCENEA2P = 10;
+    static const int VALIDATION_OBJA2P_VS_SCENEA2P = 5;
     std::vector<cv::KeyPoint> m_objectKeypoints;
     std::vector<cv::KeyPoint> m_sceneKeypoints;
 
