@@ -59,7 +59,7 @@ private:
                          cv::Mat &H);
                          
     bool _ValidateObjectQuadrilateral(Quadrilateral &sceneObjectQuadrilateral,
-                                      cv::Mat &origObjectImg);
+                                      cv::Mat &origObjectImg, int a2p_ratio = 10);
 
 
     static const int VALIDATION_OBJA2P_VS_SCENEA2P = 10;

@@ -12,12 +12,12 @@
 
 #include "AppVisioner.hpp"
 #include "Face.hpp"
-#include "InputWebcam.hpp"
+#include "App/InputFiles.hpp"
 #include "SceneReaderWebcam.hpp"
 
 int main(int argc, char **argv)
 {
-    InputWebcam input;
+    InputFiles input;
     Face face;
     SceneReaderWebcam scene_input;
     

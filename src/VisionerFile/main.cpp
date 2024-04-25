@@ -12,7 +12,7 @@
 
 #include "AppVisioner.hpp"
 #include "Face.hpp"
-#include "InputFiles.hpp"
+#include "App/InputFiles.hpp"
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
 

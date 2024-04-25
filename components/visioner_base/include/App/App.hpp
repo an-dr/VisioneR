@@ -30,8 +30,7 @@ protected:
     InterfaceSceneReader *m_scene_input;
     
 private:
-    virtual int FindGoodObjects(bool show_result = true);
-    virtual int FindBadObjects(bool show_result = true);
+    virtual int FindObjects(std::vector<cv::Mat> objects, bool show_result = true);
     virtual void PreFindAction();
 
 };

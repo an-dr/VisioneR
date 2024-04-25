@@ -11,6 +11,7 @@
 #include "ulog.h"
 #include "App/InterfaceSceneReader.hpp"
 #include "App/App.hpp"
+// #include "Visualizer.hpp"
 
 using namespace cv;
 
@@ -28,11 +29,13 @@ void App::Intro()
     m_face->ShowCalm(1000);
 }
 
-int App::FindGoodObjects(bool show_result)
+int App::FindObjects(std::vector<cv::Mat> objects, bool show_result)
 {
-    int objects = 0;
-    for (auto &object : m_input->GetGoodObjects())
+    int found_objects = 0;
+    // Visualizer vis;
+    for (auto &object : objects)
     {
+        int obj_num = 0;
         Quadrilateral obj = m_objectFinder.Find(object);
         if (obj.GetPerimeter() > 0)
         {
@@ -40,32 +43,13 @@ int App::FindGoodObjects(bool show_result)
             auto area = obj.GetArea();
             auto perimeter = obj.GetPerimeter();
             float a2p = area / perimeter;
-            objects++;
-            log_info("Object! Center: %f-%f. Area/Perimeter: %f",
-                          center.x, center.y, a2p);
+            found_objects++;
+            log_info("Object %d! Center: %f-%f. Area/Perimeter: %f",
+                          obj_num, center.x, center.y, a2p);
         }
+        obj_num++;
     }
-    return objects;
-}
-
-int App::FindBadObjects(bool show_result)
-{
-    int objects = 0;
-    for (auto &object : m_input->GetBadObjects())
-    {
-        Quadrilateral obj = m_objectFinder.Find(object);
-        if (obj.GetPerimeter() > 0)
-        {
-            Point2f center = obj.GetCenter();
-            auto area = obj.GetArea();
-            auto perimeter = obj.GetPerimeter();
-            float a2p = area / perimeter;
-            objects++;
-            log_info("Object! Center: %f-%f. Area/Perimeter: %f",
-                          center.x, center.y, a2p);
-        }
-    }
-    return objects;
+    return found_objects;
 }
 
 void App::PreFindAction() {}
@@ -79,7 +63,7 @@ int App::RunOnce(bool show_result, bool less_confused)
     PreFindAction();
 
     // Good objects
-    int good_objects = FindGoodObjects(show_result);
+    int good_objects = FindObjects(m_input->GetGoodObjects(), show_result);
     if (good_objects){
         log_info("👍 Good objects found: %d", good_objects);
     }
@@ -88,7 +72,7 @@ int App::RunOnce(bool show_result, bool less_confused)
     }
     
     // Bad objects
-    int bad_objects = FindBadObjects(show_result);
+    int bad_objects = FindObjects(m_input->GetBadObjects(), show_result);
     if (bad_objects){
         log_info("👎 Bad objects found: %d", bad_objects);
     }
