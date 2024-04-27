@@ -1,5 +1,4 @@
 #include <cmath>
-#include "tools.hpp"
 #include "Quadrilateral.hpp"
 
 Quadrilateral::Quadrilateral(Point2f p1, Point2f p2, Point2f p3, Point2f p4)

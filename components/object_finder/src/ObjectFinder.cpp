@@ -21,7 +21,6 @@
 
 #include "Quadrilateral.hpp"
 #include "opencv_tools.hpp"
-#include "tools.hpp"
 #include "ulog.h"
 
 #include "ObjectFinder.hpp"
