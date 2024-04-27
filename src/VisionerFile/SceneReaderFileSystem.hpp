@@ -10,7 +10,7 @@
 #pragma once
 
 #include "FileScanner.hpp"
-#include "App/InterfaceSceneReader.hpp"
+#include "InterfaceSceneReader.hpp"
 
 class SceneReaderFileSystem : public InterfaceSceneReader
 {

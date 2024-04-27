@@ -11,8 +11,8 @@
 // *************************************************************************
 
 #include <opencv2/highgui.hpp>
-#include "App/FaceInterface.hpp"
-#include "App/InputInterface.hpp"
+#include "FaceInterface.hpp"
+#include "InputInterface.hpp"
 #include "AppVisioner.hpp"
 
 

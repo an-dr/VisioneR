@@ -10,7 +10,7 @@
  #pragma once
  
 #include <opencv2/opencv.hpp>
-#include "App/InterfaceSceneReader.hpp"
+#include "InterfaceSceneReader.hpp"
 
 
 class SceneReaderWebcam : public InterfaceSceneReader

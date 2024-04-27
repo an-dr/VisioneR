@@ -9,7 +9,7 @@
 
 #include <opencv2/core/core.hpp>
 #include "ulog.h"
-#include "App/InterfaceSceneReader.hpp"
+#include "InterfaceSceneReader.hpp"
 #include "App/App.hpp"
 #include "Visualizer.hpp"
 

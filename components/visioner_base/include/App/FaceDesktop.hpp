@@ -13,9 +13,9 @@
 #include <opencv2/core/core.hpp>
 #include <stdint.h>
 #include <string>
-#include "App/FaceInterface.hpp"
+#include "FaceInterface.hpp"
 
-class Face : public FaceInterface
+class FaceDesktop : public FaceInterface
 {
 
 public:
@@ -33,7 +33,7 @@ public:
         {"dunno", "faces/dunno.png"},
         {"confused", "faces/confused.png"} };
 
-    Face();
+    FaceDesktop();
     void ShowThinking() override;
     void ShowBlink(int delay = 500) override;
     void ShowCalm(int delay = 500) override;
