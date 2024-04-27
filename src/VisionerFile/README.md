@@ -6,4 +6,4 @@ Visioner implementation based on reading images from `input` folder. Expects ima
 - `input/object_bad_*` - image of an object for negative response
 - `input/scene_*` - image of a scene for recognition
 
-In theory, reads all major image formats, but tested only with `jpg`.
+In theory, reads all major image formats, but tested only with `jpg` and `png`.
