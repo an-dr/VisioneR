@@ -7,16 +7,17 @@
 //
 // *************************************************************************
 
-#pragma once
+#include <opencv2/opencv.hpp>
+#include "SceneReaderWebcam.hpp"
 
-#include <opencv2/core/core.hpp>
-#include <vector>
-#include <map>
-
-class InputInterface
+SceneReaderWebcam::SceneReaderWebcam() : cap(0)
 {
-public:
-    InputInterface() = default;
-    virtual std::vector<cv::Mat> &GetGoodObjects() = 0;
-    virtual std::vector<cv::Mat> &GetBadObjects() = 0;
-};
+}
+
+cv::Mat SceneReaderWebcam::GetScene()
+{
+    if (!cap.isOpened()) // check if we succeeded
+        return cv::Mat();
+    cap >> m_scene;
+    return m_scene;
+}

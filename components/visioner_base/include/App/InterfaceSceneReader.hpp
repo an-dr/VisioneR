@@ -13,10 +13,9 @@
 #include <vector>
 #include <map>
 
-class InputInterface
+class InterfaceSceneReader
 {
 public:
-    InputInterface() = default;
-    virtual std::vector<cv::Mat> &GetGoodObjects() = 0;
-    virtual std::vector<cv::Mat> &GetBadObjects() = 0;
+    InterfaceSceneReader() = default;
+    virtual cv::Mat GetScene() = 0;
 };

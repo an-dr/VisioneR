@@ -8,12 +8,15 @@
 // *************************************************************************
 
 #include <opencv2/core/core.hpp>
+#include "ulog.h"
+#include "App/InterfaceSceneReader.hpp"
 #include "App/App.hpp"
+#include "Visualizer.hpp"
 
 using namespace cv;
 
-App::App(FaceInterface *face, InputInterface *input)
-    : m_face(face), m_input(input), m_objectFinder()
+App::App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_reader)
+    : m_face(face), m_input(input), m_scene_input(scene_reader), m_objectFinder()
 {
 }
 
@@ -26,78 +29,95 @@ void App::Intro()
     m_face->ShowCalm(1000);
 }
 
-int App::FindGoodObjects()
+int App::FindObjects(std::vector<cv::Mat> objects, bool show_result)
 {
-    int good_objects = 0;
-    for (auto &object : m_input->GetGoodObjects())
+    int found_objects = 0;
+    for (auto &object : objects)
     {
-        Point2f result;
-        if (m_objectFinder.Find(object, result))
+        int obj_num = 0;
+        Quadrilateral obj = m_objectFinder.Find(object);
+        if (obj.GetPerimeter() > 0)
         {
-            good_objects++;
-            printf("Good object found: %f %f\n", result.x, result.y);
+            found_objects++;
+            // Remove the object from the scene and update the scene
+            m_current_scene = m_vis.SelectAndDismiss(obj);
+            
+            // Logging
+            Point2f center = obj.GetCenter();
+            auto area = obj.GetArea();
+            auto perimeter = obj.GetPerimeter();
+            float a2p = area / perimeter;
+            log_info("Object %d! Center: %f-%f. Area:%f. Area/Perimeter: %f",
+                          obj_num, center.x, center.y, area, a2p);
+            
         }
-        else
-        {
-            printf("Good object not found\n");
-        }
-        printf("Good objects found: %d\n", good_objects);
+        obj_num++;
     }
-    return good_objects;
+    return found_objects;
 }
 
-int App::FindBadObjects()
-{
-    int bad_objects = 0;
-    for (auto &object : m_input->GetBadObjects())
-    {
-        Point2f result;
-        if (m_objectFinder.Find(object, result))
-        {
-            bad_objects++;
-            printf("Bad object found: %f %f\n", result.x, result.y);
-        }
-        else
-        {
-            printf("Bad object not found\n");
-        }
-        printf("Bad objects found: %d\n", bad_objects);
-    }
-    return bad_objects;
-}
+void App::PreFindAction() {}
 
-void App::PreFindAction() { }
-
-int App::RunOnce()
+int App::RunOnce(bool show_result, bool less_confused)
 {
 
-    auto scene_img = m_input->GetScene();
-    m_objectFinder.SetScene(scene_img);
-    
+    // Set the new scene
+    m_current_scene = m_scene_input->GetScene();
+    m_objectFinder.SetScene(m_current_scene);
+    m_vis.SetImg(m_current_scene);
+
     PreFindAction();
 
-    int good_objects = FindGoodObjects();
-    int bad_objects = FindBadObjects();
+    // Find good objects
+    int good_objects = FindObjects(m_input->GetGoodObjects(), show_result);
+    if (good_objects){
+        log_info("👍 Good objects found: %d", good_objects);
+    }
+    else {
+        log_info("No good objects found");
+    }
+    
+    // Find bad objects
+    int bad_objects = FindObjects(m_input->GetBadObjects(), show_result);
+    if (bad_objects){
+        log_info("👎 Bad objects found: %d", bad_objects);
+    }
+    else {
+        log_info("No bad objects found");
+    }
+    
+    // Show
+    if (show_result){
+        imshow("Scene", m_vis.GetSceneWithSelection());
+    }
 
+    // Reaction
     if (good_objects == 0 && bad_objects == 0)
     {
-        m_face->ShowDunno(3000);
+        if (less_confused)
+        {
+            m_face->ShowCalm(1);
+        }
+        else
+        {
+            m_face->ShowDunno(1);
+        }
         return -1;
     }
 
     if (good_objects > bad_objects)
     {
-        m_face->ShowHappy(3000);
+        m_face->ShowHappy(1);
         return 1;
     }
     else if (good_objects < bad_objects)
     {
-        m_face->ShowSad(3000);
+        m_face->ShowSad(1);
         return 2;
     }
     else
     {
-        m_face->ShowConfused(3000);
+        m_face->ShowConfused(1);
         return 0;
     }
 }

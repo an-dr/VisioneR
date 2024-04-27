@@ -13,8 +13,6 @@
 #include <opencv2/highgui.hpp>
 #include "App/FaceInterface.hpp"
 #include "App/InputInterface.hpp"
-#include "App/InterfaceSceneReader.hpp"
-
 #include "AppVisioner.hpp"
 
 
@@ -31,5 +29,4 @@ void AppVisioner::Delay(int ms)
 void AppVisioner::PreFindAction()
 {
     cv::imshow("Scene", m_objectFinder.GetScene());
-    // Intro();
 }

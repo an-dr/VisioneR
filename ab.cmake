@@ -16,9 +16,12 @@
 # *************************************************************************
 
 set(ABCMAKE_VERSION_MAJOR 5)
-set(ABCMAKE_VERSION_MINOR 0)
-set(ABCMAKE_VERSION_PATCH 0)
+set(ABCMAKE_VERSION_MINOR 1)
+set(ABCMAKE_VERSION_PATCH 1)
 set(ABCMAKE_VERSION "${ABCMAKE_VERSION_MAJOR}.${ABCMAKE_VERSION_MINOR}.${ABCMAKE_VERSION_PATCH}")
+
+# Configure CMake
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 include(CMakeParseArguments)
 
@@ -26,10 +29,31 @@ include(CMakeParseArguments)
 # Private functions
 # *************************************************************************
 
+# Add subdirectory to the project only if not added
+function(_add_subdirectory PATH)
+
+    # ABCMAKE_ADDED_PROJECTS is an interface, it may break compatibility if changed!
+    get_property(projects GLOBAL PROPERTY ABCMAKE_ADDED_PROJECTS)
+    
+    # Resolve relative path
+    get_filename_component(PATH "${PATH}" ABSOLUTE)
+    
+    if (NOT PATH IN_LIST projects)
+        # Add PATH to the global list
+        set_property(GLOBAL APPEND PROPERTY ABCMAKE_ADDED_PROJECTS ${PATH})
+        
+        # Use the last directory name for a binary directory name 
+        get_filename_component(last_dir "${PATH}" NAME)
+        add_subdirectory(${PATH} abc_${last_dir})
+    endif()
+    
+endfunction()
+
+
 function(_abc_AddProject PATH OUT_ABCMAKE_VER)
     if (EXISTS ${PATH}/CMakeLists.txt)
         message(DEBUG "Adding project ${PATH}")
-        add_subdirectory(${PATH})
+        _add_subdirectory(${PATH})
         
         get_directory_property(version DIRECTORY ${PATH} ABCMAKE_VERSION)
         set(${OUT_ABCMAKE_VER} ${version} PARENT_SCOPE)

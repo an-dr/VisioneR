@@ -10,9 +10,6 @@
 #pragma once
 
 #include "App/App.hpp"
-#include "App/FaceInterface.hpp"
-#include "App/InputInterface.hpp"
-#include "App/InterfaceSceneReader.hpp"
 
 class AppVisioner : public App
 {

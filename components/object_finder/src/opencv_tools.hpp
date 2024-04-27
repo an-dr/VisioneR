@@ -9,14 +9,9 @@
 
 #pragma once
 
-#include <opencv2/core/core.hpp>
-#include <vector>
-#include <map>
+#include <opencv2/opencv.hpp>
 
-class InputInterface
-{
-public:
-    InputInterface() = default;
-    virtual std::vector<cv::Mat> &GetGoodObjects() = 0;
-    virtual std::vector<cv::Mat> &GetBadObjects() = 0;
-};
+using namespace cv;
+
+Ptr<DescriptorExtractor> getDescriptorExtractor();
+Ptr<FeatureDetector> getFeatureDetector();

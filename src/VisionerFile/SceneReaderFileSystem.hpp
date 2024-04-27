@@ -9,16 +9,21 @@
 
 #pragma once
 
-#include "App/App.hpp"
-#include "App/FaceInterface.hpp"
-#include "App/InputInterface.hpp"
+#include "FileScanner.hpp"
 #include "App/InterfaceSceneReader.hpp"
 
-class AppVisioner : public App
+class SceneReaderFileSystem : public InterfaceSceneReader
 {
 public:
-    AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input);
-    void Delay(int ms) override;
-    void PreFindAction() override;
-    ~AppVisioner() = default;
+    SceneReaderFileSystem();
+    ~SceneReaderFileSystem();
+    void SetPath(const std::string &path);
+    cv::Mat GetScene() override;
+private:
+    
+    FileScanner *m_file_scanner;
+    std::string m_path;
+    std::vector<cv::Mat> m_scenes;
+    int m_scene_cursor;
+    
 };
