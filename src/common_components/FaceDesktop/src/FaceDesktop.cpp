@@ -12,12 +12,12 @@
 #include <opencv2/highgui.hpp>
 #include <stdexcept>
 
-#include "Face.hpp"
+#include "FaceDesktop.hpp"
 
 using namespace cv;
 using namespace std::chrono;
 
-Face::Face()
+FaceDesktop::FaceDesktop()
 {
     // Load all images by the paths from m_img_paths
     for (auto &img : m_img_paths)
@@ -36,7 +36,7 @@ Face::Face()
     resizeWindow(WIN_NAME, WIN_SIZE_X, WIN_SIZE_Y);
 }
 
-void Face::ShowThinking()
+void FaceDesktop::ShowThinking()
 {
     int w_time = 350;
     imshow(WIN_NAME, m_images["thinking1"]);
@@ -47,48 +47,48 @@ void Face::ShowThinking()
     Delay(w_time);
 }
 
-void Face::ShowBlink(int delay)
+void FaceDesktop::ShowBlink(int delay)
 {
     imshow(WIN_NAME, m_images["blink"]);
     Delay(delay);
 }
 
-void Face::ShowCalm(int delay)
+void FaceDesktop::ShowCalm(int delay)
 {
     imshow(WIN_NAME, m_images["calm"]);
     Delay(delay);
 }
 
-void Face::ShowHappy(int delay)
+void FaceDesktop::ShowHappy(int delay)
 {
     imshow(WIN_NAME, m_images["happy"]);
     Delay(delay);
 }
 
-void Face::ShowSad(int delay)
+void FaceDesktop::ShowSad(int delay)
 {
     imshow(WIN_NAME, m_images["sad"]);
     Delay(delay);
 }
 
-void Face::ShowDunno(int delay)
+void FaceDesktop::ShowDunno(int delay)
 {
     imshow(WIN_NAME, m_images["dunno"]);
     Delay(delay);
 }
 
-void Face::ShowConfused(int delay)
+void FaceDesktop::ShowConfused(int delay)
 {
     imshow(WIN_NAME, m_images["confused"]);
     Delay(delay);
 }
 
-bool Face::IsExit()
+bool FaceDesktop::IsExit()
 {
     return m_exit;
 }
 
-void Face::Delay(int delay)
+void FaceDesktop::Delay(int delay)
 {
     uint64_t start = GetTimeMs();
     while (GetTimeMs() - start < delay)
@@ -107,7 +107,7 @@ void Face::Delay(int delay)
     }
 }
 
-uint64_t Face::GetTimeMs()
+uint64_t FaceDesktop::GetTimeMs()
 {
     return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }

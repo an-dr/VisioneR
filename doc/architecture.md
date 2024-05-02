@@ -49,11 +49,11 @@ The project is supposed to be tested by usage.
 
 ### 5.3 Hardware Components / Deployment
 
-![deploy](architecture/deploy.svg)
+![deploy](architecture/deploy.drawio.svg)
 
 ### 5.4 Software Structure
 
-Key Software components, dependency diagrams, etc.
+![classes](architecture/class.drawio.svg)
 
 ![dep](architecture/dep.drawio.svg)
 

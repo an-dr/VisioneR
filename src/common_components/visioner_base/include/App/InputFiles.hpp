@@ -11,7 +11,7 @@
 
 #include <string>
 #include "FileScanner.hpp"
-#include "App/InputInterface.hpp"
+#include "InputInterface.hpp"
 
 class InputFiles : public InputInterface
 {

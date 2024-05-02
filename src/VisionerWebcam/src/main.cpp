@@ -11,7 +11,7 @@
 // *************************************************************************
 
 #include "AppVisioner.hpp"
-#include "Face.hpp"
+#include "FaceDesktop.hpp"
 #include "App/InputFiles.hpp"
 #include "SceneReaderWebcam.hpp"
 #include "ulog.h"
@@ -21,10 +21,9 @@ int main(int argc, char **argv)
     
     ulog_set_level(LOG_INFO);
     InputFiles input;
-    Face face;
+    FaceDesktop face;
     SceneReaderWebcam scene_input;
     
-    face.ShowThinking();
     input.LoadFiles("input");
 
     AppVisioner app(&face, &input, &scene_input);

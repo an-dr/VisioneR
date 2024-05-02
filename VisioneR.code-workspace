@@ -78,7 +78,11 @@
                     "kind": "build",
                     "isDefault": true
                 },
-                "problemMatcher": []
+                "options": {
+                    "cwd": "${input:Project}"
+                },
+                "problemMatcher": [],
+                "dependsOn": "Configure"
             },
             // Cmake build
             {
@@ -96,6 +100,9 @@
                     "kind": "build",
                     "isDefault": true
                 },
+                "options": {
+                    "cwd": "${input:Project}"
+                },
                 "problemMatcher": []
             },
             // Cmake clean
@@ -112,6 +119,9 @@
                 "group": {
                     "kind": "build",
                     "isDefault": true
+                },
+                "options": {
+                    "cwd": "${input:Project}"
                 },
                 "problemMatcher": []
             },
@@ -131,14 +141,27 @@
                     "isDefault": true
                 },
                 "options": {
-                    "env": {
-                        // "DESTDIR": "${workspaceFolder}/install2",
-                        // "CMAKE_INSTALL_PREFIX": "t",
-                    }
+                    "cwd": "${input:Project}"
                 },
                 "problemMatcher": [],
                 "dependsOn": "Build"
             }
-        ]
+        ],
+        "inputs": [{
+            "type": "pickString",
+            "id": "Project",
+            "description": "Select project",
+            "default": "VisionerFile",
+            "options": [
+                {
+                    "value": "${workspaceFolder}/src/VisionerFile",
+                    "label": "VisionerFile",
+                },
+                {
+                    "value": "${workspaceFolder}/src/VisionerWebcam",
+                    "label": "VisionerWebcam"
+                }
+            ]
+        }]
     }
 }
