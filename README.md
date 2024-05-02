@@ -10,4 +10,13 @@ The project architecture is described [here](doc/architecture.md).
 
 ## Implementation
 
-![deps](doc/README/implementation.drawio.svg)
+You can generate a Doxygen documentation by running the following command in the project root directory:
+
+```bash
+doxygen Doxyfile
+```
+
+Prerequisites:
+
+- [Doxygen](http://www.doxygen.nl/)
+- [Graphviz](https://graphviz.gitlab.io/download/)
