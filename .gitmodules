@@ -3,4 +3,4 @@
 	url = https://github.com/an-dr/universal_faces.git
 [submodule "components/microlog"]
 	path = src/common_components/microlog
-	url = git@github.com:an-dr/microlog.git
+	url = https://github.com/an-dr/microlog.git
