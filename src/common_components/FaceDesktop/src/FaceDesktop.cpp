@@ -12,7 +12,7 @@
 #include <opencv2/highgui.hpp>
 #include <stdexcept>
 
-#include "App/FaceDesktop.hpp"
+#include "FaceDesktop.hpp"
 
 using namespace cv;
 using namespace std::chrono;
