@@ -1,6 +1,6 @@
 [submodule "lib/universal_faces"]
-	path = components/universal_faces
+	path = src/common_components/universal_faces
 	url = https://github.com/an-dr/universal_faces.git
 [submodule "components/microlog"]
-	path = components/microlog
+	path = src/common_components/microlog
 	url = git@github.com:an-dr/microlog.git
