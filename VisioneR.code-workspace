@@ -132,7 +132,7 @@
                 "command": "cmake",
                 "args": [
                     "--install",
-                    "build",
+                    "${workspaceFolder}/build",
                     "--prefix",
                     "${workspaceFolder}/install"
                 ],
