@@ -8,12 +8,14 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-# Executable
+# Config: microlog
 add_definitions(-DULOG_HIDE_FILE_STRING)
 add_definitions(-DULOG_SHORT_LEVEL_STRINGS)
 add_definitions(-DULOG_USE_COLOR)
-# add_definitions(-DBUILD_TESTS=OFF)
-set(BUILD_TESTS OFF)
+
+# Config: CppLinuxSerial
+set(BUILD_TESTS OFF CACHE BOOL "Build tests")
+
 include(${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
 
 add_main_component(${PROJECT_NAME})
