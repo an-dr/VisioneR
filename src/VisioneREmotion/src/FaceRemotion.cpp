@@ -56,13 +56,13 @@ void FaceRemotion::ShowCalm(int delay)
 void FaceRemotion::ShowHappy(int delay)
 {
     serialPort.Write("3");
-    Delay(delay);
+    Delay(1000);
 }
 
 void FaceRemotion::ShowSad(int delay)
 {
     serialPort.Write("4");
-    Delay(delay);
+    Delay(1000);
 }
 
 void FaceRemotion::ShowDunno(int delay)
@@ -74,7 +74,7 @@ void FaceRemotion::ShowDunno(int delay)
 void FaceRemotion::ShowConfused(int delay)
 {
     serialPort.Write("6");
-    Delay(delay);
+    Delay(1000);
 }
 
 void FaceRemotion::Delay(int ms)
