@@ -15,12 +15,14 @@ add_definitions(-DULOG_USE_COLOR)
 include(${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
 
 add_main_component(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
 target_link_components(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/object_finder
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_base
+                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/eventpp
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS}
+                                              eventpp::eventpp)
 
 # Install examples
 FILE(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")
