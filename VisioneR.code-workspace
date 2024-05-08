@@ -15,11 +15,35 @@
                 "name": "Debug - VisionerFile",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/install/VisionerFile",
+                "program": "${workspaceFolder}/install/VisionerFile/VisionerFile",
                 "miDebuggerPath": "gdb",
                 "args": [],
                 "stopAtEntry": false,
-                "cwd": "${workspaceFolder}/install",
+                "cwd": "${workspaceFolder}/install/VisionerFile",
+                "preLaunchTask": "Install",
+                "setupCommands": [
+                    { // Display content in STL containers pretty
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
+                "environment": [
+                    {
+                        "name": "GTK_PATH",
+                        "value": ""
+                    }
+                ]
+            },
+            {
+                "name": "Debug - VisioneREmotion",
+                "type": "cppdbg",
+                "request": "launch",
+                "program": "${workspaceFolder}/install/VisioneREmotion/VisioneREmotion",
+                "miDebuggerPath": "gdb",
+                "args": [],
+                "stopAtEntry": false,
+                "cwd": "${workspaceFolder}/install/VisioneREmotion",
                 "preLaunchTask": "Install",
                 "setupCommands": [
                     { // Display content in STL containers pretty
@@ -39,11 +63,11 @@
                 "name": "Debug - VisionerWebcam",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/install/VisionerWebcam",
+                "program": "${workspaceFolder}/install/VisionerWebcam/VisionerWebcam",
                 "miDebuggerPath": "gdb",
                 "args": [],
                 "stopAtEntry": false,
-                "cwd": "${workspaceFolder}/install",
+                "cwd": "${workspaceFolder}/install/VisionerWebcam",
                 "preLaunchTask": "Install",
                 "setupCommands": [
                     { // Display content in STL containers pretty
@@ -72,16 +96,24 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "${workspaceFolder}/build"
+                    "${workspaceFolder}/build/${input:Project}"
                 ],
                 "group": {
                     "kind": "build",
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
                 "problemMatcher": [],
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true,
+                    "clear": false
+                },
                 "dependsOn": "Configure"
             },
             // Cmake build
@@ -93,7 +125,7 @@
                     "-G",
                     "Ninja",
                     "-B",
-                    "${workspaceFolder}/build",
+                    "${workspaceFolder}/build/${input:Project}",
                     "-DCMAKE_BUILD_TYPE=Debug"
                 ],
                 "group": {
@@ -101,9 +133,17 @@
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true,
+                    "clear": false
+                },
             },
             // Cmake clean
             {
@@ -112,7 +152,7 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "${workspaceFolder}/build",
+                    "${workspaceFolder}/build/${input:Project}",
                     "--target",
                     "clean"
                 ],
@@ -121,9 +161,17 @@
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
-                "problemMatcher": []
+                "problemMatcher": [],
+                "presentation": {
+                    "echo": true,
+                    "reveal": "always",
+                    "focus": false,
+                    "panel": "shared",
+                    "showReuseMessage": true,
+                    "clear": false
+                },
             },
             // Install to workspace/install
             {
@@ -132,36 +180,39 @@
                 "command": "cmake",
                 "args": [
                     "--install",
-                    "build",
+                    "${workspaceFolder}/build/${input:Project}",
                     "--prefix",
-                    "${workspaceFolder}/install"
+                    "${workspaceFolder}/install/${input:Project}"
                 ],
                 "group": {
                     "kind": "build",
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
                 "problemMatcher": [],
                 "dependsOn": "Build"
             }
         ],
-        "inputs": [{
-            "type": "pickString",
-            "id": "Project",
-            "description": "Select project",
-            "default": "VisionerFile",
-            "options": [
-                {
-                    "value": "${workspaceFolder}/src/VisionerFile",
-                    "label": "VisionerFile",
-                },
-                {
-                    "value": "${workspaceFolder}/src/VisionerWebcam",
-                    "label": "VisionerWebcam"
-                }
-            ]
-        }]
+        "inputs": [
+            {
+                "type": "pickString",
+                "id": "Project",
+                "description": "Select project",
+                "default": "VisionerFile",
+                "options": [
+                    {
+                        "value": "VisionerFile",
+                    },
+                    {
+                        "value": "VisionerWebcam",
+                    },
+                    {
+                        "value": "VisioneREmotion",
+                    }
+                ]
+            }
+        ]
     }
 }

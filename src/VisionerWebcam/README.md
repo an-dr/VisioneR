@@ -1,6 +1,6 @@
 # VisionerWebcam
 
-Visioner implementation based on reading images from `input` folder and reading scene from a webcab. Expects images of following types:
+Visioner implementation based on reading images from `input` folder and reading scene from a webcam. Expects images of following types:
 
 - `input/object_good_*` - image of an object for positive response
 - `input/object_bad_*` - image of an object for negative response
