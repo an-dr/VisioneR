@@ -13,37 +13,43 @@ env:
 
 jobs:
 
-  # build-vfile:
-  #   runs-on: ubuntu-latest
-  #   name: Build VisionerFile
+  build-vfile:
+    runs-on: ubuntu-latest
+    name: Build VisionerFile
 
-  #   steps:
-  #   - uses: actions/checkout@v4
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-  #   - name: 🤖 Install OpenCV
-  #     run: sudo apt-get install libopencv-dev libopencv-contrib-dev -y 
+    - name: 🤖 Install OpenCV
+      run: sudo apt-get install libopencv-dev libopencv-contrib-dev -y 
 
-  #   - name: 🔧 Configure CMake
-  #     run: cmake -B ${{github.workspace}}/build -S${{github.workspace}}/src/VisionerFile -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: 🔧 Configure CMake
+      run: cmake -B ${{github.workspace}}/build -S${{github.workspace}}/src/VisionerFile -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-  #   - name: 🔨 Build
-  #     run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: 🔨 Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-  # build-vwebcam:
-  #   runs-on: ubuntu-latest
-  #   name: Build VisionerWebcam
+  build-vwebcam:
+    runs-on: ubuntu-latest
+    name: Build VisionerWebcam
 
-  #   steps:
-  #   - uses: actions/checkout@v4
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        token: ${{ secrets.GITHUB_TOKEN }}
 
-  #   - name: 🤖 Install OpenCV
-  #     run: sudo apt-get install libopencv-dev libopencv-contrib-dev -y 
+    - name: 🤖 Install OpenCV
+      run: sudo apt-get install libopencv-dev libopencv-contrib-dev -y 
 
-  #   - name: 🔧 Configure CMake
-  #     run: cmake -B ${{github.workspace}}/build -S${{github.workspace}}/src/VisionerWebcam -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: 🔧 Configure CMake
+      run: cmake -B ${{github.workspace}}/build -S${{github.workspace}}/src/VisionerWebcam -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
-  #   - name: 🔨 Build
-  #     run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: 🔨 Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
   build-vremotion:
     runs-on: ubuntu-latest
