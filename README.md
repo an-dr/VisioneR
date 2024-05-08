@@ -15,7 +15,7 @@ The project architecture is described [here](doc/architecture.md).
 
 ## Demo
 
-Implementation using rEmotion platform:
+Implementation using the [rEmotion](https://github.com/an-dr/rEmotion) platform:
 
 ![demo](doc/README/main_demo.gif)
 
