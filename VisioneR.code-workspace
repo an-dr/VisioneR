@@ -15,11 +15,11 @@
                 "name": "Debug - VisionerFile",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/install/VisionerFile",
+                "program": "${workspaceFolder}/install/VisionerFile/VisionerFile",
                 "miDebuggerPath": "gdb",
                 "args": [],
                 "stopAtEntry": false,
-                "cwd": "${workspaceFolder}/install",
+                "cwd": "${workspaceFolder}/install/VisionerFile",
                 "preLaunchTask": "Install",
                 "setupCommands": [
                     { // Display content in STL containers pretty
@@ -39,11 +39,11 @@
                 "name": "Debug - VisioneREmotion",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/install/VisioneREmotion",
+                "program": "${workspaceFolder}/install/VisioneREmotion/VisioneREmotion",
                 "miDebuggerPath": "gdb",
                 "args": [],
                 "stopAtEntry": false,
-                "cwd": "${workspaceFolder}/install",
+                "cwd": "${workspaceFolder}/install/VisioneREmotion",
                 "preLaunchTask": "Install",
                 "setupCommands": [
                     { // Display content in STL containers pretty
@@ -63,11 +63,11 @@
                 "name": "Debug - VisionerWebcam",
                 "type": "cppdbg",
                 "request": "launch",
-                "program": "${workspaceFolder}/install/VisionerWebcam",
+                "program": "${workspaceFolder}/install/VisionerWebcam/VisionerWebcam",
                 "miDebuggerPath": "gdb",
                 "args": [],
                 "stopAtEntry": false,
-                "cwd": "${workspaceFolder}/install",
+                "cwd": "${workspaceFolder}/install/VisionerWebcam",
                 "preLaunchTask": "Install",
                 "setupCommands": [
                     { // Display content in STL containers pretty
@@ -96,14 +96,14 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "${workspaceFolder}/build"
+                    "${workspaceFolder}/build/${input:Project}"
                 ],
                 "group": {
                     "kind": "build",
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
                 "problemMatcher": [],
                 "presentation": {
@@ -125,7 +125,7 @@
                     "-G",
                     "Ninja",
                     "-B",
-                    "${workspaceFolder}/build",
+                    "${workspaceFolder}/build/${input:Project}",
                     "-DCMAKE_BUILD_TYPE=Debug"
                 ],
                 "group": {
@@ -133,7 +133,7 @@
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
                 "problemMatcher": [],
                 "presentation": {
@@ -152,7 +152,7 @@
                 "command": "cmake",
                 "args": [
                     "--build",
-                    "${workspaceFolder}/build",
+                    "${workspaceFolder}/build/${input:Project}",
                     "--target",
                     "clean"
                 ],
@@ -161,7 +161,7 @@
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
                 "problemMatcher": [],
                 "presentation": {
@@ -180,40 +180,39 @@
                 "command": "cmake",
                 "args": [
                     "--install",
-                    "${workspaceFolder}/build",
+                    "${workspaceFolder}/build/${input:Project}",
                     "--prefix",
-                    "${workspaceFolder}/install"
+                    "${workspaceFolder}/install/${input:Project}"
                 ],
                 "group": {
                     "kind": "build",
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}"
                 },
                 "problemMatcher": [],
                 "dependsOn": "Build"
             }
         ],
-        "inputs": [{
-            "type": "pickString",
-            "id": "Project",
-            "description": "Select project",
-            "default": "VisionerFile",
-            "options": [
-                {
-                    "value": "src/VisionerFile",
-                    "label": "VisionerFile",
-                },
-                {
-                    "value": "src/VisionerWebcam",
-                    "label": "VisionerWebcam"
-                },
-                {
-                    "value": "src/VisioneREmotion",
-                    "label": "VisioneREmotion"
-                }
-            ]
-        }]
+        "inputs": [
+            {
+                "type": "pickString",
+                "id": "Project",
+                "description": "Select project",
+                "default": "VisionerFile",
+                "options": [
+                    {
+                        "value": "VisionerFile",
+                    },
+                    {
+                        "value": "VisionerWebcam",
+                    },
+                    {
+                        "value": "VisioneREmotion",
+                    }
+                ]
+            }
+        ]
     }
 }

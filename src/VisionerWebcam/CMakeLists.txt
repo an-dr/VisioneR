@@ -24,5 +24,5 @@ target_link_components(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/../common_compo
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop)
 
 # Install
-FILE(GLOB examples "img/examples/*")
+FILE(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")
 install (FILES ${examples} DESTINATION ./input)

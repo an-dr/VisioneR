@@ -4,9 +4,20 @@
 
 An app, showing different facial expressions in response for different objects in front of the camera
 
-![face](doc/README/face_demo.gif)
-
 The project architecture is described [here](doc/architecture.md).
+
+## Table of Contents
+
+- [VisioneR](#visioner)
+    - [Table of Contents](#table-of-contents)
+    - [Demo](#demo)
+    - [Implementation](#implementation)
+
+## Demo
+
+Implementation using rEmotion platform:
+
+![demo](doc/README/main_demo.gif)
 
 ## Implementation
 

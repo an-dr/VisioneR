@@ -1,7 +1,7 @@
-[submodule "lib/universal_faces"]
+[submodule "src/common_components/FaceDesktop/components/universal_faces"]
 	path = src/common_components/FaceDesktop/components/universal_faces
 	url = https://github.com/an-dr/universal_faces.git
-[submodule "components/microlog"]
+[submodule "src/common_components/microlog"]
 	path = src/common_components/microlog
 	url = https://github.com/an-dr/microlog.git
 [submodule "src/VisioneREmotion/components/CppLinuxSerial"]
