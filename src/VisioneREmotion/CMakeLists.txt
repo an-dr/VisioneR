@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(VisionerWebcam)
+project(VisioneREmotion)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
@@ -21,7 +21,7 @@ target_link_components(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/../common_compo
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/object_finder
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_base
                                        ${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop)
+                                       )
 
 # Install
 FILE(GLOB examples "img/examples/*")

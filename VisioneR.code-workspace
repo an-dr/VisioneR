@@ -160,6 +160,10 @@
                 {
                     "value": "${workspaceFolder}/src/VisionerWebcam",
                     "label": "VisionerWebcam"
+                },
+                {
+                    "value": "${workspaceFolder}/src/VisioneREmotion",
+                    "label": "VisioneREmotion"
                 }
             ]
         }]
