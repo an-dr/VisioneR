@@ -317,9 +317,10 @@ bool ObjectFinder::_FindHomography(vector<Point2f> &src_points,
             }
         }
         log_debug("Inliers=%d Outliers=%d", inliers, outliers);
-        log_trace("H[0][0]=%f \tH[0][1]=%f \tH[0][2]=%f", H.at<double>(0, 0), H.at<double>(0, 1), H.at<double>(0, 2));
-        log_trace("H[1][0]=%f \tH[1][1]=%f \tH[1][2]=%f", H.at<double>(1, 0), H.at<double>(1, 1), H.at<double>(1, 2));
-        log_trace("H[2][0]=%f \tH[2][1]=%f \tH[2][2]=%f", H.at<double>(2, 0), H.at<double>(2, 1), H.at<double>(2, 2));
+        // TODO: only if there is H
+        //log_trace("H[0][0]=%f \tH[0][1]=%f \tH[0][2]=%f", H.at<double>(0, 0), H.at<double>(0, 1), H.at<double>(0, 2));
+        //log_trace("H[1][0]=%f \tH[1][1]=%f \tH[1][2]=%f", H.at<double>(1, 0), H.at<double>(1, 1), H.at<double>(1, 2));
+        // log_trace("H[2][0]=%f \tH[2][1]=%f \tH[2][2]=%f", H.at<double>(2, 0), H.at<double>(2, 1), H.at<double>(2, 2));
         result = true;
     }
     else

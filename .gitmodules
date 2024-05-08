@@ -4,3 +4,6 @@
 [submodule "components/microlog"]
 	path = src/common_components/microlog
 	url = https://github.com/an-dr/microlog.git
+[submodule "src/VisioneREmotion/components/CppLinuxSerial"]
+	path = src/VisioneREmotion/components/CppLinuxSerial
+	url = https://github.com/gbmhunter/CppLinuxSerial.git

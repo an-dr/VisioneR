@@ -11,6 +11,7 @@
 #include <string>
 
 #include "FaceInterface.hpp"
+#include "CppLinuxSerial/SerialPort.hpp"
 
 class FaceRemotion : public FaceInterface
 {
@@ -27,5 +28,5 @@ public:
     ~FaceRemotion();
     
 private:
-    int m_serial_port;
+    mn::CppLinuxSerial::SerialPort serialPort;
 };

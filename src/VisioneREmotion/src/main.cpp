@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     
     ulog_set_level(LOG_INFO);
     InputFiles input;
-    FaceRemotion face("/dev/ttyACM0", 115200);
+    FaceRemotion face("/dev/ttyUSB0", 9600);
     SceneReaderWebcam scene_input;
     
     input.LoadFiles("input");
