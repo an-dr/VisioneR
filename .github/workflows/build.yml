@@ -22,9 +22,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: Dovyski/setup-opencv-action@v1.2
-      with:
-        opencv-version: '4.0.0'
+
+    - name: Install OpenCV
+      run: sudo apt-get install libopencv-dev libopencv-contrib-dev -y 
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
