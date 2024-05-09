@@ -31,9 +31,8 @@ protected:
     InterfaceSceneReader *m_scene_input;
     cv::Mat m_current_scene;
     Visualizer m_vis;
-    
+
 private:
     virtual int FindObjects(std::vector<cv::Mat> objects, bool show_result = true);
     virtual void PreFindAction();
-
 };

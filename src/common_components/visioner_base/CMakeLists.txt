@@ -3,5 +3,4 @@ project(visioner_base)
 
 include($ENV{ABCMAKE_PATH})
 add_component(visioner_base)
-target_link_components(visioner_base ${CMAKE_CURRENT_LIST_DIR}/../microlog
-                                     ${CMAKE_CURRENT_LIST_DIR}/../visioner_interfaces)
+target_link_components(visioner_base NAME minilog visioner_interfaces object_finder)
