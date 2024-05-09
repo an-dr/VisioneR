@@ -7,7 +7,7 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 include($ENV{ABCMAKE_PATH})
 add_component(${PROJECT_NAME})
-target_link_components(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/../visioner_interfaces)
+target_link_components(${PROJECT_NAME} PATH ${CMAKE_CURRENT_LIST_DIR}/../visioner_interfaces)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
 
          

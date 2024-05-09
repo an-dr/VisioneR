@@ -7,5 +7,5 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 
 include($ENV{ABCMAKE_PATH})
 add_component(${PROJECT_NAME})
-target_link_component(${PROJECT_NAME} microlog)
+target_link_components(${PROJECT_NAME} NAME minilog)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})

@@ -8,10 +8,14 @@
 // *************************************************************************
 
 #include <opencv2/core/core.hpp>
-#include "ulog.h"
+#include "FaceInterface.hpp"
+#include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
-#include "App/App.hpp"
+#include "ObjectFinder.hpp"
 #include "Visualizer.hpp"
+#include "ulog.h"
+
+#include "App/App.hpp"
 
 using namespace cv;
 
