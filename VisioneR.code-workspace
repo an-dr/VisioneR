@@ -126,7 +126,7 @@
                     "Ninja",
                     "-B",
                     "${workspaceFolder}/build/${input:Project}",
-                    "-DCMAKE_BUILD_TYPE=Debug"
+                    "-DCMAKE_BUILD_TYPE=Debug",
                 ],
                 "group": {
                     "kind": "build",
