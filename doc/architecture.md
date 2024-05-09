@@ -53,6 +53,8 @@ The project is supposed to be tested by usage.
 
 ### 5.4 Software Structure
 
+
+
 ![classes](architecture/class.drawio.svg)
 
 ![dep](architecture/dep.drawio.svg)
@@ -62,5 +64,7 @@ The project is supposed to be tested by usage.
 ![states](architecture/states.svg)
 
 ### 5.6 Operational Logic
+
+![data_exchange](architecture/communication.drawio.svg)
 
 ![flow](architecture/flow.drawio.svg)

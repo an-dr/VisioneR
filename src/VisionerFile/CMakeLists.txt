@@ -12,7 +12,10 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 add_definitions(-DULOG_HIDE_FILE_STRING)
 add_definitions(-DULOG_SHORT_LEVEL_STRINGS)
 add_definitions(-DULOG_USE_COLOR)
-include(${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
+
+# Add abcmake
+set(ENV{ABCMAKE_PATH} ${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
+include($ENV{ABCMAKE_PATH})
 
 add_main_component(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
