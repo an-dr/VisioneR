@@ -3,4 +3,4 @@ project(visioner_base)
 
 include($ENV{ABCMAKE_PATH})
 add_component(visioner_base)
-target_link_components(visioner_base NAME minilog visioner_interfaces object_finder)
+target_link_components(visioner_base NAME microlog visioner_interfaces object_finder)
