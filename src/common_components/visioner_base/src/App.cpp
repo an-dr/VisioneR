@@ -20,7 +20,8 @@
 using namespace cv;
 
 App::App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_reader)
-    : m_face(face), m_input(input), m_scene_input(scene_reader), m_objectFinder()
+    : m_face(face), m_input(input), m_scene_input(scene_reader), m_objectFinder(new ObjectFinder),
+      m_vis(new Visualizer)
 {
 }
 
@@ -33,18 +34,23 @@ void App::Intro()
     m_face->ShowCalm(1000);
 }
 
+cv::Mat App::GetScene()
+{
+    return m_objectFinder->GetScene();
+}
+
 int App::FindObjects(std::vector<cv::Mat> objects, bool show_result)
 {
     int found_objects = 0;
     for (auto &object : objects)
     {
         int obj_num = 0;
-        Quadrilateral obj = m_objectFinder.Find(object);
+        Quadrilateral obj = m_objectFinder->Find(object);
         if (obj.GetPerimeter() > 0)
         {
             found_objects++;
             // Remove the object from the scene and update the scene
-            m_current_scene = m_vis.SelectAndDismiss(obj);
+            m_current_scene = m_vis->SelectAndDismiss(obj);
             
             // Logging
             Point2f center = obj.GetCenter();
@@ -67,8 +73,8 @@ int App::RunOnce(bool show_result, bool less_confused)
 
     // Set the new scene
     m_current_scene = m_scene_input->GetScene();
-    m_objectFinder.SetScene(m_current_scene);
-    m_vis.SetImg(m_current_scene);
+    m_objectFinder->SetScene(m_current_scene);
+    m_vis->SetImg(m_current_scene);
 
     PreFindAction();
 
@@ -92,7 +98,7 @@ int App::RunOnce(bool show_result, bool less_confused)
     
     // Show
     if (show_result){
-        imshow("Scene", m_vis.GetSceneWithSelection());
+        imshow("Scene", m_vis->GetSceneWithSelection());
     }
 
     // Reaction

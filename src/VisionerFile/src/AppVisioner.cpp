@@ -30,6 +30,6 @@ void AppVisioner::Delay(int ms)
 
 void AppVisioner::PreFindAction()
 {
-    cv::imshow("Scene", m_objectFinder.GetScene());
+    cv::imshow("Scene", GetScene());
     // Intro();
 }

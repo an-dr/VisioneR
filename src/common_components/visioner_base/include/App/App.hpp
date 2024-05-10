@@ -9,11 +9,15 @@
 
 #pragma once
 
-#include "ObjectFinder.hpp"
+#include <opencv2/opencv.hpp>
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
-#include "Visualizer.hpp"
+
+// Forward declaration
+class ObjectFinder;
+class Visualizer;
+
 
 class App
 {
@@ -25,14 +29,17 @@ public:
     ~App() = default;
 
 protected:
-    ObjectFinder m_objectFinder;
+    cv::Mat GetScene();
+    
+    ObjectFinder *m_objectFinder;
+    Visualizer *m_vis;
     FaceInterface *m_face;
     InputInterface *m_input;
     InterfaceSceneReader *m_scene_input;
     cv::Mat m_current_scene;
-    Visualizer m_vis;
 
 private:
+    
     virtual int FindObjects(std::vector<cv::Mat> objects, bool show_result = true);
     virtual void PreFindAction();
 };

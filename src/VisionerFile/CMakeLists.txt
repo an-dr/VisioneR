@@ -21,13 +21,11 @@ add_main_component(${PROJECT_NAME})
 
 register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/object_finder
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_base
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop
                     )
 
-target_link_components(${PROJECT_NAME} NAME visioner_interfaces 
-                                            object_finder 
+target_link_components(${PROJECT_NAME} NAME visioner_interfaces
                                             visioner_base 
                                             microlog 
                                             FaceDesktop)
