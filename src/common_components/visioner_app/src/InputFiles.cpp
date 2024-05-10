@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include <string>
 #include "FileScanner.hpp"
-#include "App/InputFiles.hpp"
+#include "InputFiles.hpp"
 
 
 InputFiles::InputFiles()

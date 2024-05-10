@@ -22,7 +22,7 @@ include($ENV{ABCMAKE_PATH})
 
 register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_base
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
                     )
 
@@ -31,7 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
 target_link_libraries(${PROJECT_NAME} PRIVATE CppLinuxSerial::CppLinuxSerial)
 target_link_components(${PROJECT_NAME} NAME SceneReaderWebcam
                                             visioner_interfaces
-                                            visioner_base
+                                            visioner_app
                                             microlog )
 
 # Install

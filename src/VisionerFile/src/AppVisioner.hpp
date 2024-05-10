@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "App/App.hpp"
+#include "App.hpp"
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
