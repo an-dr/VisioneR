@@ -7,6 +7,7 @@
 //
 // *************************************************************************
 
+#include <thread>
 #include <opencv2/core/core.hpp>
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
@@ -129,5 +130,19 @@ int App::RunOnce(bool show_result, bool less_confused)
     {
         m_face->ShowConfused(1);
         return 0;
+    }
+}
+
+void App::Start(int loop_delay_ms){
+    m_thread = new thread(thread_func, this, loop_delay_ms);
+}
+
+void App::thread_func(App * p_this, int loop_delay_ms)
+{
+    while(1)
+    {
+        p_this->RunOnce();
+        printf("\n");
+        p_this->Delay(loop_delay_ms);
     }
 }

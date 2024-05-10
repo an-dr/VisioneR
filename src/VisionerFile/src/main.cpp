@@ -25,17 +25,10 @@ int main(int argc, char **argv)
     face.ShowThinking();
     input.LoadFiles("input");
     scene_input.SetPath("input");
-    
 
     AppVisioner app(&face, &input, &scene_input);
+    app.Start(3000);
     
-    // Until the face is not exiting
-    int result = 0;
-    while(!face.IsExit())
-    {
-        result = app.RunOnce();
-        printf("\n");
-        app.Delay(3000);
-    }
+    while(!face.IsExit());
     return 0;
 }
