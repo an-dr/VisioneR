@@ -15,7 +15,7 @@
 #include "Visualizer.hpp"
 #include "ulog.h"
 
-#include "App/App.hpp"
+#include "App.hpp"
 
 using namespace cv;
 

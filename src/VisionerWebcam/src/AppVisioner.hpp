@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "App/App.hpp"
+#include "App.hpp"
 
 class AppVisioner : public App
 {
