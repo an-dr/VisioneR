@@ -133,7 +133,10 @@
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${workspaceFolder}/src/${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}",
+                    "env": {
+                        "ABCMAKE_EMOJI": "1"
+                    }
                 },
                 "problemMatcher": [],
                 "presentation": {
