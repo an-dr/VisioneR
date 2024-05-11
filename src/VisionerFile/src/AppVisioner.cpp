@@ -14,6 +14,7 @@
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
+#include <unistd.h>
 
 #include "AppVisioner.hpp"
 
@@ -25,7 +26,8 @@ AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSc
 
 void AppVisioner::Delay(int ms)
 {
-    cv::waitKey(ms);
+    cv::waitKey(1); // to show window
+    usleep(ms * 1000);
 }
 
 void AppVisioner::PreFindAction()

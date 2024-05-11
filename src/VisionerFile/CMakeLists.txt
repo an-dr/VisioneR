@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.15)
 project(VisionerFile)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_AUTOMOC ON) # for QT
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+
+# Qt
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 # OpenCV
 find_package(OpenCV REQUIRED)
@@ -20,6 +24,7 @@ include($ENV{ABCMAKE_PATH})
 add_main_component(${PROJECT_NAME})
 
 register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/gui
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop
@@ -27,9 +32,11 @@ register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
 
 target_link_components(${PROJECT_NAME} NAME visioner_interfaces
                                             visioner_app 
-                                            microlog 
+                                            microlog
+                                            gui
                                             FaceDesktop)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS}
+                                              Qt6::Widgets)
 
 # Install examples
 FILE(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")

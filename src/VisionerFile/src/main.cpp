@@ -15,9 +15,16 @@
 #include "InputFiles.hpp"
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
+#include "MainWindow.hpp"
+#include <QApplication>
 
 int main(int argc, char **argv)
 {
+    QApplication GUI(argc, argv);
+    MainWindow window;
+    window.show();
+    return GUI.exec();
+    
     ulog_set_level(LOG_INFO);
     InputFiles input;
     FaceDesktop face;

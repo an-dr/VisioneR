@@ -11,6 +11,7 @@ The project architecture is described [here](doc/architecture.md).
 - [VisioneR](#visioner)
     - [Table of Contents](#table-of-contents)
     - [Demo](#demo)
+    - [Requrements](#requrements)
     - [Implementation](#implementation)
 
 ## Demo
@@ -18,6 +19,12 @@ The project architecture is described [here](doc/architecture.md).
 Implementation using the [rEmotion](https://github.com/an-dr/rEmotion) platform:
 
 ![demo](doc/README/main_demo.gif)
+
+## Requrements
+
+- opencv
+- qt6-base-dev
+- qt6-wayland
 
 ## Implementation
 
