@@ -15,10 +15,11 @@
 #include "InputInterface.hpp"
 #include "AppVisioner.hpp"
 #include <unistd.h>
+#include "Gui.hpp"
 
 
-AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input)
-    : App(face, input, scene_input)
+AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, Gui * gui, InterfaceSceneReader *scene_input)
+    : App(face, input, gui, scene_input)
 {
 }
 

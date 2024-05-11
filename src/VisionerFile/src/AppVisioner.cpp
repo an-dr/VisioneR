@@ -15,7 +15,6 @@
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
 #include <unistd.h>
-#include "Gui.hpp"
 
 #include "AppVisioner.hpp"
 
