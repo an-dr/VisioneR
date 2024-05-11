@@ -116,7 +116,18 @@
                 },
                 "dependsOn": "Configure"
             },
-            // Cmake build
+            {
+                "label": "compile_command.json",
+                "type": "shell",
+                "command": "cp",
+                "args": [
+                    "${workspaceFolder}/build/${input:Project}/compile_commands.json",
+                    "${workspaceFolder}/build/compile_commands.json",
+                ],
+                "options": {
+                    "cwd": "${workspaceFolder}",
+                },
+            },
             {
                 "label": "Configure",
                 "type": "shell",
@@ -126,14 +137,17 @@
                     "Ninja",
                     "-B",
                     "${workspaceFolder}/build/${input:Project}",
-                    "-DCMAKE_BUILD_TYPE=Debug"
+                    "-DCMAKE_BUILD_TYPE=Debug",
                 ],
                 "group": {
                     "kind": "build",
                     "isDefault": true
                 },
                 "options": {
-                    "cwd": "${workspaceFolder}/src/${input:Project}"
+                    "cwd": "${workspaceFolder}/src/${input:Project}",
+                    "env": {
+                        "ABCMAKE_EMOJI": "1"
+                    }
                 },
                 "problemMatcher": [],
                 "presentation": {

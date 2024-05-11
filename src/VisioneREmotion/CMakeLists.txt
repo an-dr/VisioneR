@@ -16,17 +16,23 @@ add_definitions(-DULOG_USE_COLOR)
 # Config: CppLinuxSerial
 set(BUILD_TESTS OFF CACHE BOOL "Build tests")
 
-include(${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
+# Add abcmake
+set(ENV{ABCMAKE_PATH} ${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
+include($ENV{ABCMAKE_PATH})
+
+register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
+                    )
 
 add_main_component(${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
 target_link_libraries(${PROJECT_NAME} PRIVATE CppLinuxSerial::CppLinuxSerial)
-target_link_components(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/object_finder
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_base
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
-                                       )
+target_link_components(${PROJECT_NAME} NAME SceneReaderWebcam
+                                            visioner_interfaces
+                                            visioner_app
+                                            microlog )
 
 # Install
 FILE(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")

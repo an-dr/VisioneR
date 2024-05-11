@@ -9,13 +9,15 @@
 
 #pragma once
 
-#include "App.hpp"
+#include <QMainWindow>
 
-class AppVisioner : public App
+class MainWindow : public QMainWindow
 {
+    Q_OBJECT
+
 public:
-    AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input);
-    void Delay(int ms) override;
-    void PreFindAction() override;
-    ~AppVisioner() = default;
+    MainWindow();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 };

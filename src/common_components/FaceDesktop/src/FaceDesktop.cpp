@@ -50,25 +50,25 @@ void FaceDesktop::ShowThinking()
 void FaceDesktop::ShowBlink(int delay)
 {
     imshow(WIN_NAME, m_images["blink"]);
-    Delay(delay);
+    // Delay(delay);
 }
 
 void FaceDesktop::ShowCalm(int delay)
 {
     imshow(WIN_NAME, m_images["calm"]);
-    Delay(delay);
+    // Delay(delay);
 }
 
 void FaceDesktop::ShowHappy(int delay)
 {
     imshow(WIN_NAME, m_images["happy"]);
-    Delay(delay);
+    // Delay(delay);
 }
 
 void FaceDesktop::ShowSad(int delay)
 {
     imshow(WIN_NAME, m_images["sad"]);
-    Delay(delay);
+    // Delay(delay);
 }
 
 void FaceDesktop::ShowDunno(int delay)

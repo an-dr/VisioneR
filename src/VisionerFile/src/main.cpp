@@ -11,31 +11,44 @@
 // *************************************************************************
 
 #include "AppVisioner.hpp"
+#include "FaceApp.hpp"
 #include "FaceDesktop.hpp"
-#include "App/InputFiles.hpp"
+#include "InputFiles.hpp"
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
+#include "eventpp/eventqueue.h"
+#include "MainWindow.hpp"
+#include <QApplication>
+
 
 int main(int argc, char **argv)
 {
+    QApplication GUI(argc, argv);
+    MainWindow window;
+    window.show();
+    return GUI.exec();
+    
     ulog_set_level(LOG_INFO);
     InputFiles input;
-    FaceDesktop face;
+    FaceDesktop face_actions;
+    FaceApp app_face(face_actions);
+    app_face.Start();
+
+    // app_face.SendEvent(EmotionEventType::Thinking, EmotionEvent());
+    // app_face.SendEvent(EmotionEventType::Blink, EmotionEvent());
+    // app_face.SendEvent(EmotionEventType::Thinking, EmotionEvent());
+    // app_face.SendEvent(EmotionEventType::Thinking, EmotionEvent());
+
+
     SceneReaderFileSystem scene_input;
-    face.ShowThinking();
+    face_actions.ShowThinking();
     input.LoadFiles("input");
     scene_input.SetPath("input");
-    
 
-    AppVisioner app(&face, &input, &scene_input);
-    
-    // Until the face is not exiting
-    int result = 0;
-    while(!face.IsExit())
-    {
-        result = app.RunOnce();
-        printf("\n");
-        app.Delay(3000);
-    }
+    AppVisioner app(&app_face, &input, &scene_input);
+    app.Start(1000);
+
+    while (!face_actions.IsExit())
+        ;
     return 0;
 }

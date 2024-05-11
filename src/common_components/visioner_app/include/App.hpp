@@ -9,31 +9,42 @@
 
 #pragma once
 
-#include "ObjectFinder.hpp"
+#include <thread>
+#include <opencv2/opencv.hpp>
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
-#include "Visualizer.hpp"
+
+// Forward declaration
+class ObjectFinder;
+class Visualizer;
+class FaceApp;
+
 
 class App
 {
 public:
-    App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input = nullptr);
+    App(FaceApp *face, InputInterface *input, InterfaceSceneReader *scene_input = nullptr);
     virtual int RunOnce(bool show_result = true, bool less_confused = false);
+    virtual void Start(int loop_delay_ms);
     virtual void Intro();
     virtual void Delay(int ms) = 0;
     ~App() = default;
 
 protected:
-    ObjectFinder m_objectFinder;
-    FaceInterface *m_face;
+    cv::Mat GetScene();
+    static void thread_func(App * p_this, int loop_delay_ms);
+    
+    ObjectFinder *m_objectFinder;
+    Visualizer *m_vis;
+    FaceApp *m_face;
     InputInterface *m_input;
     InterfaceSceneReader *m_scene_input;
     cv::Mat m_current_scene;
-    Visualizer m_vis;
-    
+    std::thread * m_thread;
+
 private:
+    
     virtual int FindObjects(std::vector<cv::Mat> objects, bool show_result = true);
     virtual void PreFindAction();
-
 };

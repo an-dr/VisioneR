@@ -12,16 +12,25 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 add_definitions(-DULOG_HIDE_FILE_STRING)
 add_definitions(-DULOG_SHORT_LEVEL_STRINGS)
 add_definitions(-DULOG_USE_COLOR)
-include(${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
+
+# Add abcmake
+set(ENV{ABCMAKE_PATH} ${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
+include($ENV{ABCMAKE_PATH})
 
 add_main_component(${PROJECT_NAME})
+register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop
+                    )
+
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
-target_link_components(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/object_finder
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_base
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
-                                       ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop)
+target_link_components(${PROJECT_NAME} NAME FaceDesktop
+                                            SceneReaderWebcam 
+                                            visioner_app
+                                            microlog 
+                                            visioner_interfaces )
 
 # Install
 FILE(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")

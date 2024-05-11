@@ -14,22 +14,24 @@
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
+#include <unistd.h>
 
 #include "AppVisioner.hpp"
 
 
-AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input)
+AppVisioner::AppVisioner(FaceApp *face, InputInterface *input, InterfaceSceneReader *scene_input)
     : App(face, input, scene_input)
 {
 }
 
 void AppVisioner::Delay(int ms)
 {
-    cv::waitKey(ms);
+    cv::waitKey(1); // to show window
+    usleep(ms * 1000);
 }
 
 void AppVisioner::PreFindAction()
 {
-    cv::imshow("Scene", m_objectFinder.GetScene());
+    cv::imshow("Scene", GetScene());
     // Intro();
 }
