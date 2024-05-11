@@ -21,6 +21,7 @@ add_main_component(${PROJECT_NAME})
 
 register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
+                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/face_app
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
                     ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop
                     )
@@ -29,6 +30,7 @@ target_link_components(${PROJECT_NAME} PATH ${CMAKE_CURRENT_LIST_DIR}/../common_
                                        NAME visioner_interfaces 
                                             visioner_app 
                                             microlog 
+                                            FaceApp
                                             FaceDesktop)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS}
                                               eventpp::eventpp)

@@ -11,74 +11,39 @@
 // *************************************************************************
 
 #include "AppVisioner.hpp"
+#include "FaceApp.hpp"
 #include "FaceDesktop.hpp"
 #include "InputFiles.hpp"
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
 #include "eventpp/eventqueue.h"
 
-enum class MyEventType
-{
-    ev1,
-    ev2,
-    ev3,
-};
-
-struct MyEvent
-{
-    MyEventType type;
-    int data;
-};
-
-struct MyEventPolicies
-{
-    static MyEventType getEvent(const MyEvent &e)
-    {
-        return e.type;
-    }
-};
-
-void func3(const std::string s, bool b)
-{
-    std::cout << std::boolalpha << "Got event 3, s is " << s << " b is " << b << std::endl;
-}
-
-void func5(const std::string s, bool b)
-{
-    std::cout << std::boolalpha << "Got event 5, s is " << s << " b is " << b << std::endl;
-}
-
-void event_test()
-{
-    eventpp::EventQueue<int, void(const std::string &, const bool)> queue;
-
-    queue.appendListener(3, func3);
-    queue.appendListener(5, func5);
-
-    // The listeners are not triggered during enqueue.
-    queue.enqueue(3, "Hello", true);
-    queue.enqueue(5, "World", false);
-
-    // Process the event queue, dispatch all queued events.
-    queue.process();
-}
 
 int main(int argc, char **argv)
 {
-    event_test();
-    return 0;
+    // event_test();
+    // return 0;
     ulog_set_level(LOG_INFO);
     InputFiles input;
-    FaceDesktop face;
+    FaceDesktop face_actions;
+    FaceApp app_face(face_actions);
+    app_face.Start();
+
+    // app_face.SendEvent(EmotionEventType::Thinking, EmotionEvent());
+    // app_face.SendEvent(EmotionEventType::Blink, EmotionEvent());
+    // app_face.SendEvent(EmotionEventType::Thinking, EmotionEvent());
+    // app_face.SendEvent(EmotionEventType::Thinking, EmotionEvent());
+
+
     SceneReaderFileSystem scene_input;
-    face.ShowThinking();
+    face_actions.ShowThinking();
     input.LoadFiles("input");
     scene_input.SetPath("input");
 
-    AppVisioner app(&face, &input, &scene_input);
-    app.Start(3000);
+    AppVisioner app(&app_face, &input, &scene_input);
+    app.Start(1000);
 
-    while (!face.IsExit())
+    while (!face_actions.IsExit())
         ;
     return 0;
 }

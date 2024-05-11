@@ -14,13 +14,14 @@
 #include "InterfaceSceneReader.hpp"
 #include "ObjectFinder.hpp"
 #include "Visualizer.hpp"
+#include "FaceApp.hpp"
 #include "ulog.h"
 
 #include "App.hpp"
 
 using namespace cv;
 
-App::App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_reader)
+App::App(FaceApp *face, InputInterface *input, InterfaceSceneReader *scene_reader)
     : m_face(face), m_input(input), m_scene_input(scene_reader), m_objectFinder(new ObjectFinder),
       m_vis(new Visualizer)
 {
@@ -28,11 +29,11 @@ App::App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene
 
 void App::Intro()
 {
-    m_face->ShowCalm(1000);
-    m_face->ShowBlink(200);
-    m_face->ShowCalm(1000);
-    m_face->ShowBlink(200);
-    m_face->ShowCalm(1000);
+    // m_face->ShowCalm(1000);
+    // m_face->ShowBlink(200);
+    // m_face->ShowCalm(1000);
+    // m_face->ShowBlink(200);
+    // m_face->ShowCalm(1000);
 }
 
 cv::Mat App::GetScene()
@@ -107,28 +108,28 @@ int App::RunOnce(bool show_result, bool less_confused)
     {
         if (less_confused)
         {
-            m_face->ShowCalm(1);
+            m_face->SendEvent(EmotionEventType::Calm, EmotionEvent());
         }
         else
         {
-            m_face->ShowDunno(1);
+            m_face->SendEvent(EmotionEventType::Dunno, EmotionEvent());
         }
         return -1;
     }
 
     if (good_objects > bad_objects)
     {
-        m_face->ShowHappy(1);
+        m_face->SendEvent(EmotionEventType::Happy, EmotionEvent());
         return 1;
     }
     else if (good_objects < bad_objects)
     {
-        m_face->ShowSad(1);
+        m_face->SendEvent(EmotionEventType::Sad, EmotionEvent());
         return 2;
     }
     else
     {
-        m_face->ShowConfused(1);
+        m_face->SendEvent(EmotionEventType::Confused, EmotionEvent());
         return 0;
     }
 }

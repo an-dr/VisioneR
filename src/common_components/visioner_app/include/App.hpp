@@ -18,12 +18,13 @@
 // Forward declaration
 class ObjectFinder;
 class Visualizer;
+class FaceApp;
 
 
 class App
 {
 public:
-    App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input = nullptr);
+    App(FaceApp *face, InputInterface *input, InterfaceSceneReader *scene_input = nullptr);
     virtual int RunOnce(bool show_result = true, bool less_confused = false);
     virtual void Start(int loop_delay_ms);
     virtual void Intro();
@@ -36,7 +37,7 @@ protected:
     
     ObjectFinder *m_objectFinder;
     Visualizer *m_vis;
-    FaceInterface *m_face;
+    FaceApp *m_face;
     InputInterface *m_input;
     InterfaceSceneReader *m_scene_input;
     cv::Mat m_current_scene;
