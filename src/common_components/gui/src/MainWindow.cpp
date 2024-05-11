@@ -13,36 +13,56 @@
 #include "MainWindow.hpp"
 #include <iostream>
 
-
-MainWindow::MainWindow()
+MainWindow::MainWindow() : m_imageLeft(nullptr), m_imageRight(nullptr)
 {
-        // Create QLabel widgets for the images
-        QLabel* imageLabel1 = new QLabel(this);
-        QLabel* imageLabel2 = new QLabel(this);
+    // Create QLabel widgets for the images
+    m_imageLeft = new QLabel(this);
+    m_imageRight = new QLabel(this);
 
-        // Load the images (replace with actual file paths)
-        QPixmap pixmap1("faces/calm.png");
-        QPixmap pixmap2("input/scene_da.jpg");
-        
-        int width = 640;
-        int height = 480;
-        QPixmap resizedPixmap1 = pixmap1.scaled(width, height, Qt::KeepAspectRatio);
-        QPixmap resizedPixmap2 = pixmap2.scaled(width, height, Qt::KeepAspectRatio);
+    // Set the label positions and sizes
+    m_imageLeft->setGeometry(10, 10, LEFT_W, LEFT_H);
+    m_imageRight->setGeometry(20 + RIGHT_W, 10, RIGHT_W, RIGHT_H);
 
+    // Set the main window properties
+    setCentralWidget(m_imageLeft); // Set imageLabel1 as central widget
+    setWindowTitle("VisioneR GUI");
+    resize(2 * 20 + LEFT_W + RIGHT_W, RIGHT_H + 20); // Set the window size
 
-        // Set the images on the labels
-        imageLabel1->setPixmap(resizedPixmap1);
-        imageLabel2->setPixmap(resizedPixmap2);
-        
+    // Load the images (replace with actual file paths)
+    SetImageLeft("faces/calm.png");
+    SetImageRight("faces/blink.png");
+}
 
-        // Set the label positions and sizes
-        imageLabel1->setGeometry(10, 10, width, height);
-        imageLabel2->setGeometry(660, 10, width, height);
+void MainWindow::SetImageLeft(std::string path)
+{
+    QPixmap img(path.c_str());
+    SetImageLeft(img);
+}
 
-        // Set the main window properties
-        setCentralWidget(imageLabel1); // Set imageLabel1 as central widget
-        setWindowTitle("VisioneR GUI");
-        resize(1320, 500); // Set the window size
+void MainWindow::SetImageRight(std::string path)
+{
+    QPixmap img(path.c_str());
+    SetImageRight(img);
+}
+
+void MainWindow::SetImageLeft(QPixmap &img)
+{
+    // Resize and set
+    QPixmap resizedImg = img.scaled(LEFT_W, LEFT_H, Qt::KeepAspectRatio);
+    m_imageLeft->setPixmap(resizedImg);
+}
+
+void MainWindow::SetImageRight(QPixmap &img)
+{
+    // Resize and set
+    QPixmap resizedImg = img.scaled(RIGHT_W, RIGHT_H, Qt::KeepAspectRatio);
+    m_imageRight->setPixmap(resizedImg);
+}
+
+MainWindow::~MainWindow()
+{
+    delete m_imageLeft;
+    delete m_imageRight;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
