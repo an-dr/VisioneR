@@ -7,20 +7,22 @@
 //
 // *************************************************************************
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "InterfaceSceneReader.hpp"
 #include "ObjectFinder.hpp"
 #include "Visualizer.hpp"
+#include "Gui.hpp"
 #include "ulog.h"
 
 #include "App.hpp"
 
 using namespace cv;
 
-App::App(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_reader)
-    : m_face(face), m_input(input), m_scene_input(scene_reader), m_objectFinder(new ObjectFinder),
+App::App(FaceInterface *face, InputInterface *input, Gui* gui, InterfaceSceneReader *scene_reader)
+    : m_face(face), m_input(input), m_scene_input(scene_reader), m_gui(gui),
+      m_objectFinder(new ObjectFinder),
       m_vis(new Visualizer)
 {
 }
@@ -37,6 +39,24 @@ void App::Intro()
 cv::Mat App::GetScene()
 {
     return m_objectFinder->GetScene();
+}
+
+QImage App::ToQImage(cv::Mat &cv_mat)
+{
+    // cv::Mat temp;
+    // cv_mat.copyTo(temp);
+    // cv::cvtColor(temp, temp, cv::COLOR_BGR2RGB);
+    return QImage((unsigned char*) cv_mat.data,
+                                   cv_mat.cols,
+                                   cv_mat.rows,
+                                   QImage::Format_RGB888);
+}
+
+void App::Show(std::string title, cv::Mat cv_img)
+{
+    // m_gui->SetTitle(title);
+    auto qimg = ToQImage(cv_img);
+    m_gui->SetImageRight(qimg);
 }
 
 int App::FindObjects(std::vector<cv::Mat> objects, bool show_result)
@@ -98,7 +118,7 @@ int App::RunOnce(bool show_result, bool less_confused)
     
     // Show
     if (show_result){
-        imshow("Scene", m_vis->GetSceneWithSelection());
+        Show("Scene", m_vis->GetSceneWithSelection());
     }
 
     // Reaction

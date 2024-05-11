@@ -27,24 +27,25 @@ int main(int argc, char **argv)
     ulog_set_level(LOG_INFO);
     InputFiles input;
     SceneReaderFileSystem scene_input;
+    sleep(2); // BUG: find what is not inited
     FaceDesktop face(gui);
-    sleep(1); // BUG: find what is not inited
+    sleep(2); // BUG: find what is not inited
     face.ShowThinking();
     input.LoadFiles("input");
     scene_input.SetPath("input");
     
-    int i = 0;
-    while(1){
-        printf("%d\n", i++);
-    }
+    // int i = 0;
+    // while(1){
+    //     printf("%d\n", i++);
+    // }
 
-    AppVisioner app(&face, &input, &scene_input);
+    AppVisioner app(&face, &input, &gui, &scene_input);
     
     // Until the face is not exiting
     int result = 0;
     while(!face.IsExit())
     {
-        result = app.RunOnce(false);
+        result = app.RunOnce();
         printf("\n");
         app.Delay(3000);
     }

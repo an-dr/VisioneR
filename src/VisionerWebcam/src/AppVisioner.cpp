@@ -14,6 +14,7 @@
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
 #include "AppVisioner.hpp"
+#include <unistd.h>
 
 
 AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input)
@@ -23,10 +24,10 @@ AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSc
 
 void AppVisioner::Delay(int ms)
 {
-    cv::waitKey(ms);
+    usleep(ms * 1000);
 }
 
 void AppVisioner::PreFindAction()
 {
-    cv::imshow("Scene", GetScene());
+    Show("Scene", GetScene());
 }
