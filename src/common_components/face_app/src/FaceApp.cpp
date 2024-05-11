@@ -11,6 +11,7 @@
 #include <thread>
 #include <unistd.h>
 #include <iostream>
+#include <chrono>
 
 using namespace std;
 
@@ -51,10 +52,15 @@ void FaceApp::thread_func(FaceApp *self)
 {
     while (1)
     {
-        if (!(self->m_events.processOne()))
-        {
-            self->m_actions->ShowCalm(1);
-        }
+        // if (!(self->m_events.processOne()))
+        // {
+        //     self->m_actions->ShowCalm(1);
+        // }
+        self->m_events.process();
+        // const auto now = std::chrono::system_clock::now();
+        // const std::time_t t_c = std::chrono::system_clock::to_time_t(now);
+        // std::cout << "The system clock is currently at " << std::ctime(&t_c);
+        usleep(100000);
     }
 }
 
