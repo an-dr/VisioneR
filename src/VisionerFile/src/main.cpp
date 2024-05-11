@@ -17,12 +17,17 @@
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
 #include "eventpp/eventqueue.h"
+#include "MainWindow.hpp"
+#include <QApplication>
 
 
 int main(int argc, char **argv)
 {
-    // event_test();
-    // return 0;
+    QApplication GUI(argc, argv);
+    MainWindow window;
+    window.show();
+    return GUI.exec();
+    
     ulog_set_level(LOG_INFO);
     InputFiles input;
     FaceDesktop face_actions;
