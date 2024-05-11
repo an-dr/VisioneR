@@ -10,5 +10,4 @@ add_component(gui)
 # add headers to sources so CMAKE_AUTOMOC can see them
 target_sources(${PROJECT_NAME} PRIVATE src/MainWindow.hpp)
 
-target_link_libraries(${PROJECT_NAME} Qt6::Widgets
-                     )
+target_link_libraries(${PROJECT_NAME} Qt6::Widgets)

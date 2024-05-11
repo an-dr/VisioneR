@@ -35,6 +35,22 @@ void Gui::SetImageLeft(QPixmap &img)
     }
 }
 
+void Gui::SetImageLeft(QImage &img)
+{
+    int w = img.width();
+    QPixmap pixmap;
+    pixmap.convertFromImage(img);
+    w = pixmap.width();
+    SetImageLeft(pixmap);
+}
+
+void Gui::SetImageRight(QImage &img)
+{
+    QPixmap pixmap;
+    pixmap.convertFromImage(img);
+    SetImageRight(pixmap);
+}
+
 void Gui::SetImageRight(QPixmap &img)
 {
     if (m_window != nullptr)

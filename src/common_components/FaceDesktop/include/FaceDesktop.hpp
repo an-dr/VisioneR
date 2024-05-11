@@ -14,6 +14,9 @@
 #include <stdint.h>
 #include <string>
 #include "FaceInterface.hpp"
+#include "Gui.hpp"
+#include <QPixmap>
+#include <QImage>
 
 class FaceDesktop : public FaceInterface
 {
@@ -31,9 +34,9 @@ public:
         {"happy", "faces/happy.png"},
         {"sad", "faces/sad.png"},
         {"dunno", "faces/dunno.png"},
-        {"confused", "faces/confused.png"} };
+        {"confused", "faces/confused.png"}};
 
-    FaceDesktop();
+    FaceDesktop(Gui &gui);
     void ShowThinking() override;
     void ShowBlink(int delay = 500) override;
     void ShowCalm(int delay = 500) override;
@@ -44,11 +47,14 @@ public:
     bool IsExit();
 
 private:
-    static const int WAIT_DELTA = 100;
+    QPixmap ToQPixmap(const cv::Mat mat);
     void Delay(int delay) override;
     uint64_t GetTimeMs();
 
-    std::map<std::string, cv::Mat> m_images;
-    bool m_exit = false;
-    int m_show_count = 0;
+    static const int WAIT_DELTA = 100;
+
+    std::map<std::string, QImage> m_images;
+    Gui *m_gui;
+    bool m_exit;
+    int m_show_count;
 };

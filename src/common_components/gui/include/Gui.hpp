@@ -11,6 +11,7 @@
 #include <thread>
 #include <mutex>
 #include <QPixmap>
+#include <QImage>
 
 class MainWindow; // Forward declaration
 
@@ -23,8 +24,12 @@ public:
     // Sets image. Thread safe.
     void SetImageLeft(QPixmap &img);
     
+    void SetImageLeft(QImage &img);
+    
     // Sets image. Thread safe.
     void SetImageRight(QPixmap &img);
+    
+    void SetImageRight(QImage &img);
 
 private:
     static void thread_func(Gui *self);

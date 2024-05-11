@@ -16,35 +16,37 @@
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
 #include "Gui.hpp"
+#include <unistd.h>
+
 
 int main(int argc, char **argv)
 {
     Gui gui;
     gui.Start();
+
+    ulog_set_level(LOG_INFO);
+    InputFiles input;
+    SceneReaderFileSystem scene_input;
+    FaceDesktop face(gui);
+    sleep(1); // BUG: find what is not inited
+    face.ShowThinking();
+    input.LoadFiles("input");
+    scene_input.SetPath("input");
     
     int i = 0;
     while(1){
         printf("%d\n", i++);
     }
 
-    // ulog_set_level(LOG_INFO);
-    // InputFiles input;
-    // FaceDesktop face;
-    // SceneReaderFileSystem scene_input;
-    // face.ShowThinking();
-    // input.LoadFiles("input");
-    // scene_input.SetPath("input");
+    AppVisioner app(&face, &input, &scene_input);
     
-
-    // AppVisioner app(&face, &input, &scene_input);
-    
-    // // Until the face is not exiting
-    // int result = 0;
-    // while(!face.IsExit())
-    // {
-    //     result = app.RunOnce();
-    //     printf("\n");
-    //     app.Delay(3000);
-    // }
+    // Until the face is not exiting
+    int result = 0;
+    while(!face.IsExit())
+    {
+        result = app.RunOnce(false);
+        printf("\n");
+        app.Delay(3000);
+    }
     return 0;
 }
