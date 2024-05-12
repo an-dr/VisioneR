@@ -26,6 +26,7 @@ public:
     void SetImageLeft(QPixmap &img);
     void SetImageRight(std::string path);
     void SetImageRight(QPixmap &img);
+    bool isClosed();
     ~MainWindow();
 
 protected:
@@ -39,4 +40,6 @@ protected:
 private:
     QLabel *m_imageLeft;
     QLabel *m_imageRight;
+    bool m_closed;
+    void keyPressEvent(QKeyEvent *event) override;
 };

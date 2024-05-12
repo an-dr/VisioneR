@@ -12,17 +12,39 @@
 
 #include "MainWindow.hpp"
 #include <QApplication>
+#include <thread>
+#include <pthread.h>
+#include <iostream>
 
 #include "Gui.hpp"
 
 void Gui::Start()
 {
     m_thread = std::thread(thread_func, this);
+    while (!isReady());
 }
 
 Gui::~Gui()
 {
-    delete m_window;
+    m_thread.join();
+}
+
+bool Gui::isReady()
+{
+    if (m_qapp == nullptr)
+    {
+        return false;
+    }
+    return !(m_qapp->startingUp());
+}
+
+bool Gui::isClosed()
+{
+    if (m_window == nullptr)
+    {
+        return true;
+    }
+    return m_window->isClosed();
 }
 
 void Gui::SetImageLeft(QPixmap &img)
@@ -65,8 +87,12 @@ void Gui::thread_func(Gui *self)
 {
     int argc = 0;
     char **argv = {};
-    QApplication GUI(argc, argv);
+    // Name the thread
+    pthread_setname_np(pthread_self(), "Gui"); 
+    
+    self->m_qapp = new QApplication(argc, argv);
     self->m_window = new MainWindow;
     self->m_window->show();
-    GUI.exec();
+    self->m_qapp->exec();
+    std::cout<< "Gui Closed" <<std::endl;
 }

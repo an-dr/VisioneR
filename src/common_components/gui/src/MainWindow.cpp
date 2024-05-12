@@ -12,8 +12,10 @@
 #include <QPixmap>
 #include "MainWindow.hpp"
 #include <iostream>
+#include <QEvent>
+#include <QKeyEvent>
 
-MainWindow::MainWindow() : m_imageLeft(nullptr), m_imageRight(nullptr)
+MainWindow::MainWindow() : m_imageLeft(nullptr), m_imageRight(nullptr), m_closed(false)
 {
     // Create QLabel widgets for the images
     m_imageLeft = new QLabel(this);
@@ -59,6 +61,11 @@ void MainWindow::SetImageRight(QPixmap &img)
     m_imageRight->setPixmap(resizedImg);
 }
 
+bool MainWindow::isClosed()
+{
+    return m_closed;
+}
+
 MainWindow::~MainWindow()
 {
     delete m_imageLeft;
@@ -67,5 +74,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    m_closed = true;
     std::cout << "Bye" << std::endl;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape)
+    {
+        close()
+    }
 }
