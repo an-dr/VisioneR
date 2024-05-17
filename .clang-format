@@ -1,0 +1,6 @@
+Language: Cpp
+BasedOnStyle: LLVM
+SpacesBeforeTrailingComments: 2
+AccessModifierOffset: -1
+SortIncludes: true
+IncludeBlocks: Regroup

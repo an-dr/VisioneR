@@ -12,15 +12,15 @@
 
 #include "AppVisioner.hpp"
 #include "FaceDesktop.hpp"
+#include "Gui.hpp"
 #include "InputFiles.hpp"
 #include "SceneReaderFileSystem.hpp"
 #include "ulog.h"
-#include "Gui.hpp"
-#include <unistd.h>
-#include <csignal> // for handling abort
-#include <pthread.h>
-#include <iostream>
 
+#include <csignal>  // for handling abort
+#include <iostream>
+#include <pthread.h>
+#include <unistd.h>
 
 // void abort_handler(int) {
 //     std::cout << "Aborted" <<std::endl;
@@ -33,38 +33,36 @@
 //     // // std::_Exit(EXIT_FAILURE);
 // }
 
-int main(int argc, char **argv)
-{
-    // Name the thread
-    pthread_setname_np(pthread_self(), "Main"); 
-    // std::signal(SIGABRT, abort_handler);
+int main(int argc, char **argv) {
+  // Name the thread
+  pthread_setname_np(pthread_self(), "Main");
+  // std::signal(SIGABRT, abort_handler);
 
-    Gui gui;
-    gui.Start();
+  Gui gui;
+  gui.Start();
 
-    ulog_set_level(LOG_INFO);
-    InputFiles input;
-    SceneReaderFileSystem scene_input;
-    FaceDesktop face(gui);
-    face.ShowThinking();
-    input.LoadFiles("input");
-    scene_input.SetPath("input");
-    
-    // int i = 0;
-    // while(1){
-    //     printf("%d\n", i++);
-    // }
+  ulog_set_level(LOG_INFO);
+  InputFiles input;
+  SceneReaderFileSystem scene_input;
+  FaceDesktop face(gui);
+  face.ShowThinking();
+  input.LoadFiles("input");
+  scene_input.SetPath("input");
 
-    AppVisioner app(&face, &input, &gui, &scene_input);
-    
-    // Until the face is not exiting
-    int result = 0;
-    while(!gui.isClosed())
-    {
-        result = app.RunOnce();
-        printf("\n");
-        app.Delay(3000);
-    }
-    printf("Main thread is closed\n");
-    return 0;
+  // int i = 0;
+  // while(1){
+  //     printf("%d\n", i++);
+  // }
+
+  AppVisioner app(&face, &input, &gui, &scene_input);
+
+  // Until the face is not exiting
+  int result = 0;
+  while (!gui.isClosed()) {
+    result = app.RunOnce();
+    printf("\n");
+    app.Delay(3000);
+  }
+  printf("Main thread is closed\n");
+  return 0;
 }
