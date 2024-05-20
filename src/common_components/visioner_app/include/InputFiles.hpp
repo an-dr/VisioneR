@@ -13,21 +13,19 @@
 #include "FileScanner.hpp"
 #include "InputInterface.hpp"
 
-class InputFiles : public InputInterface
-{
-public:
+class InputFiles : public InputInterface {
+ public:
     InputFiles();
-    std::vector<cv::Mat>& GetGoodObjects() override;
-    std::vector<cv::Mat>& GetBadObjects() override;
+    std::vector<cv::Mat> &GetGoodObjects() override;
+    std::vector<cv::Mat> &GetBadObjects() override;
     void LoadFiles(const std::string &path);
     ~InputFiles();
 
-private:
+ private:
     FileScanner *m_file_scanner;
     std::string m_path;
     std::vector<cv::Mat> m_objects_good;
     std::vector<cv::Mat> m_objects_bad;
     std::vector<std::string> m_objects_good_names;
     std::vector<std::string> m_objects_bad_names;
-    
 };

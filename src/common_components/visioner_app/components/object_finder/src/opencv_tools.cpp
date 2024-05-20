@@ -1,7 +1,6 @@
 #include "opencv_tools.hpp"
 
-Ptr<DescriptorExtractor> getDescriptorExtractor()
-{
+Ptr<DescriptorExtractor> getDescriptorExtractor() {
     Ptr<DescriptorExtractor> extractor;
 #if CV_MAJOR_VERSION == 2
     // The extractor can be any of (see OpenCV features2d.hpp):
@@ -13,14 +12,13 @@ Ptr<DescriptorExtractor> getDescriptorExtractor()
     // extractor = Ptr(new FREAK());
 #elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
     extractor = xfeatures2d::SIFT::create();
-#else // >= 4.3.0
+#else  // >= 4.3.0
     extractor = SIFT::create();
 #endif
     return extractor;
 }
 
-Ptr<FeatureDetector> getFeatureDetector()
-{
+Ptr<FeatureDetector> getFeatureDetector() {
     Ptr<FeatureDetector> detector;
 #if CV_MAJOR_VERSION == 2
     // detector = Ptr(new DenseFeatureDetector());
@@ -34,7 +32,7 @@ Ptr<FeatureDetector> getFeatureDetector()
     // detector = Ptr(new BRISK());
 #elif CV_MAJOR_VERSION < 4 || (CV_MAJOR_VERSION == 4 && CV_MINOR_VERSION < 3)
     detector = xfeatures2d::SIFT::create();
-#else // >= 4.3.0
+#else  // >= 4.3.0
     detector = SIFT::create();
 #endif
 

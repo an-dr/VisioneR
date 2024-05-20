@@ -11,10 +11,10 @@
 
 #include "App.hpp"
 
-class AppVisioner : public App
-{
-public:
-    AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input);
+class AppVisioner : public App {
+ public:
+    AppVisioner(FaceInterface *face, InputInterface *input,
+                InterfaceSceneReader *scene_input);
     void Delay(int ms) override;
     ~AppVisioner() = default;
 };

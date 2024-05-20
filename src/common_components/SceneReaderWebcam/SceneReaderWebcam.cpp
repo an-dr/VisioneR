@@ -7,16 +7,13 @@
 //
 // *************************************************************************
 
-#include <opencv2/opencv.hpp>
 #include "SceneReaderWebcam.hpp"
+#include <opencv2/opencv.hpp>
 
-SceneReaderWebcam::SceneReaderWebcam() : cap(0)
-{
-}
+SceneReaderWebcam::SceneReaderWebcam() : cap(0) {}
 
-cv::Mat SceneReaderWebcam::GetScene()
-{
-    if (!cap.isOpened()) // check if we succeeded
+cv::Mat SceneReaderWebcam::GetScene() {
+    if (!cap.isOpened())  // check if we succeeded
         return cv::Mat();
     cap >> m_scene;
     return m_scene;

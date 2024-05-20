@@ -11,73 +11,74 @@
 // *************************************************************************
 
 #include "Gui.hpp"
+
 #include <QApplication>
 #include <iostream>
-#include <pthread.h>
 #include <thread>
+#include <pthread.h>
 #include "MainWindow.hpp"
 
 void Gui::Start() {
-  m_thread = std::thread(thread_func, this);
-  while (!isReady())
-    ;
+    m_thread = std::thread(thread_func, this);
+    while (!isReady()) {
+    }
 }
 
 Gui::~Gui() { m_thread.join(); }
 
 bool Gui::isReady() {
-  if (m_qapp == nullptr) {
-    return false;
-  }
-  return !(m_qapp->startingUp());
+    if (m_qapp == nullptr) {
+        return false;
+    }
+    return !(m_qapp->startingUp());
 }
 
 bool Gui::isClosed() {
-  if (m_window == nullptr) {
-    return true;
-  }
-  return m_window->isClosed();
+    if (m_window == nullptr) {
+        return true;
+    }
+    return m_window->isClosed();
 }
 
 void Gui::SetImageLeft(QPixmap &img) {
-  if (m_window != nullptr) {
-    m_mux.lock();
-    m_window->SetImageLeft(img);
-    m_mux.unlock();
-  }
+    if (m_window != nullptr) {
+        m_mux.lock();
+        m_window->SetImageLeft(img);
+        m_mux.unlock();
+    }
 }
 
 void Gui::SetImageLeft(QImage &img) {
-  int w = img.width();
-  QPixmap pixmap;
-  pixmap.convertFromImage(img);
-  w = pixmap.width();
-  SetImageLeft(pixmap);
+    int w = img.width();
+    QPixmap pixmap;
+    pixmap.convertFromImage(img);
+    w = pixmap.width();
+    SetImageLeft(pixmap);
 }
 
 void Gui::SetImageRight(QImage &img) {
-  QPixmap pixmap;
-  pixmap.convertFromImage(img);
-  SetImageRight(pixmap);
+    QPixmap pixmap;
+    pixmap.convertFromImage(img);
+    SetImageRight(pixmap);
 }
 
 void Gui::SetImageRight(QPixmap &img) {
-  if (m_window != nullptr) {
-    m_mux.lock();
-    m_window->SetImageRight(img);
-    m_mux.unlock();
-  }
+    if (m_window != nullptr) {
+        m_mux.lock();
+        m_window->SetImageRight(img);
+        m_mux.unlock();
+    }
 }
 
 void Gui::thread_func(Gui *self) {
-  int argc = 0;
-  char **argv = {};
-  // Name the thread
-  pthread_setname_np(pthread_self(), "Gui");
+    int argc = 0;
+    char **argv = {};
+    // Name the thread
+    pthread_setname_np(pthread_self(), "Gui");
 
-  self->m_qapp = new QApplication(argc, argv);
-  self->m_window = new MainWindow;
-  self->m_window->show();
-  self->m_qapp->exec();
-  std::cout << "Gui Closed" << std::endl;
+    self->m_qapp = new QApplication(argc, argv);
+    self->m_window = new MainWindow;
+    self->m_window->show();
+    self->m_qapp->exec();
+    std::cout << "Gui Closed" << std::endl;
 }

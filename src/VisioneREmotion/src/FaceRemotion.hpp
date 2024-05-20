@@ -9,13 +9,12 @@
 
 #pragma once
 #include <string>
-
-#include "FaceInterface.hpp"
 #include "CppLinuxSerial/SerialPort.hpp"
 
-class FaceRemotion : public FaceInterface
-{
-public:
+#include "FaceInterface.hpp"
+
+class FaceRemotion : public FaceInterface {
+ public:
     FaceRemotion(std::string port_name, int baudrate);
     void ShowThinking() override;
     void ShowBlink(int delay = 500) override;
@@ -26,7 +25,7 @@ public:
     void ShowConfused(int delay = 500) override;
     void Delay(int ms) override;
     ~FaceRemotion();
-    
-private:
+
+ private:
     mn::CppLinuxSerial::SerialPort serialPort;
 };

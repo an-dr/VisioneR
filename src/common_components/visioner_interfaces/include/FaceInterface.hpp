@@ -10,7 +10,7 @@
 #pragma once
 
 class FaceInterface {
-public:
+ public:
     virtual void ShowThinking() = 0;
     virtual void ShowBlink(int delay = 500) = 0;
     virtual void ShowCalm(int delay = 500) = 0;

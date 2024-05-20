@@ -9,13 +9,12 @@
 
 #pragma once
 
-#include <opencv2/core/core.hpp>
-#include <vector>
 #include <map>
+#include <vector>
+#include <opencv2/core/core.hpp>
 
-class InputInterface
-{
-public:
+class InputInterface {
+ public:
     InputInterface() = default;
     virtual std::vector<cv::Mat> &GetGoodObjects() = 0;
     virtual std::vector<cv::Mat> &GetBadObjects() = 0;

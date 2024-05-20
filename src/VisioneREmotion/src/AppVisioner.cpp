@@ -10,18 +10,13 @@
 //
 // *************************************************************************
 
+#include "AppVisioner.hpp"
 #include <opencv2/highgui.hpp>
 #include "FaceInterface.hpp"
 #include "InputInterface.hpp"
-#include "AppVisioner.hpp"
 
+AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input,
+                         InterfaceSceneReader *scene_input)
+    : App(face, input, scene_input) {}
 
-AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input)
-    : App(face, input, scene_input)
-{
-}
-
-void AppVisioner::Delay(int ms)
-{
-    cv::waitKey(ms);
-}
+void AppVisioner::Delay(int ms) { cv::waitKey(ms); }

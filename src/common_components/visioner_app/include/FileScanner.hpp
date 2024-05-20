@@ -12,14 +12,13 @@
 #include <string>
 #include <vector>
 
-class FileScanner
-{
-public:
+class FileScanner {
+ public:
     FileScanner(const std::string &path);
 
     // Get all files in the directory by pattern
     std::vector<std::string> GetFiles(const std::string &pattern);
-    
-private:
+
+ private:
     std::string m_path;
 };

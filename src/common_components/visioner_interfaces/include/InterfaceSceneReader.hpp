@@ -9,13 +9,12 @@
 
 #pragma once
 
-#include <opencv2/core/core.hpp>
-#include <vector>
 #include <map>
+#include <vector>
+#include <opencv2/core/core.hpp>
 
-class InterfaceSceneReader
-{
-public:
+class InterfaceSceneReader {
+ public:
     InterfaceSceneReader() = default;
     virtual cv::Mat GetScene() = 0;
 };

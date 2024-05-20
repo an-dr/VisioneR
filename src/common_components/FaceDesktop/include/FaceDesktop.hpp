@@ -9,19 +9,18 @@
 
 #pragma once
 
+#include <QImage>
+#include <QPixmap>
 #include <map>
+#include <string>
 #include <opencv2/core/core.hpp>
 #include <stdint.h>
-#include <string>
-#include "FaceInterface.hpp"
 #include "Gui.hpp"
-#include <QPixmap>
-#include <QImage>
 
-class FaceDesktop : public FaceInterface
-{
+#include "FaceInterface.hpp"
 
-public:
+class FaceDesktop : public FaceInterface {
+ public:
     static const int WIN_SIZE_X = 500;
     static const int WIN_SIZE_Y = 256;
     static constexpr char WIN_NAME[] = "VisioneR";
@@ -46,7 +45,7 @@ public:
     void ShowConfused(int delay = 500) override;
     bool IsExit();
 
-private:
+ private:
     QPixmap ToQPixmap(const cv::Mat mat);
     void Delay(int delay) override;
     uint64_t GetTimeMs();

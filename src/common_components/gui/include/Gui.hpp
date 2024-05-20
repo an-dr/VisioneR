@@ -19,25 +19,25 @@ class QApplication;  // Forward declaration
 
 class Gui {
  public:
-  ~Gui();
-  void Start();
-  bool isReady();
-  bool isClosed();
+    ~Gui();
+    void Start();
+    bool isReady();
+    bool isClosed();
 
-  // Sets image. Thread safe.
-  void SetImageLeft(QPixmap &img);
+    // Sets image. Thread safe.
+    void SetImageLeft(QPixmap &img);
 
-  void SetImageLeft(QImage &img);
+    void SetImageLeft(QImage &img);
 
-  // Sets image. Thread safe.
-  void SetImageRight(QPixmap &img);
-  void SetImageRight(QImage &img);
+    // Sets image. Thread safe.
+    void SetImageRight(QPixmap &img);
+    void SetImageRight(QImage &img);
 
  private:
-  static void thread_func(Gui *self);
+    static void thread_func(Gui *self);
 
-  QApplication *m_qapp;
-  MainWindow *m_window;
-  std::thread m_thread;
-  std::mutex m_mux;
+    QApplication *m_qapp;
+    MainWindow *m_window;
+    std::thread m_thread;
+    std::mutex m_mux;
 };
