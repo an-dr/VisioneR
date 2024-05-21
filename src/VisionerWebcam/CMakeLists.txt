@@ -18,22 +18,27 @@ set(ENV{ABCMAKE_PATH} ${CMAKE_CURRENT_LIST_DIR}/../../ab.cmake)
 include($ENV{ABCMAKE_PATH})
 
 add_main_component(${PROJECT_NAME})
-register_components(${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/gui
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
-                    ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop
-                    )
+register_components(
+    ${CMAKE_CURRENT_LIST_DIR}/../common_components/microlog
+    ${CMAKE_CURRENT_LIST_DIR}/../common_components/gui
+    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_interfaces
+    ${CMAKE_CURRENT_LIST_DIR}/../common_components/visioner_app
+    ${CMAKE_CURRENT_LIST_DIR}/../common_components/SceneReaderWebcam
+    ${CMAKE_CURRENT_LIST_DIR}/../common_components/FaceDesktop
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
-target_link_components(${PROJECT_NAME} NAME FaceDesktop
-                                            SceneReaderWebcam 
-                                            visioner_app
-                                            microlog 
-                                            visioner_interfaces 
-                                            gui)
+target_link_components(
+    ${PROJECT_NAME}
+    NAME
+    FaceDesktop
+    SceneReaderWebcam
+    visioner_app
+    microlog
+    visioner_interfaces
+    gui
+)
 
 # Install
-FILE(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")
-install (FILES ${examples} DESTINATION ./input)
+file(GLOB examples "${CMAKE_CURRENT_LIST_DIR}/../../img/examples/*")
+install(FILES ${examples} DESTINATION ./input)

@@ -26,5 +26,4 @@ void AppVisioner::Delay(int ms) { usleep(ms * 1000); }
 
 void AppVisioner::PreFindAction() {
     Show("", GetScene());
-    // Intro();
 }

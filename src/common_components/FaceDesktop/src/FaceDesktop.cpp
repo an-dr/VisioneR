@@ -80,21 +80,6 @@ QPixmap FaceDesktop::ToQPixmap(const cv::Mat mat) {
 
 void FaceDesktop::Delay(int delay) {
     usleep(1000 * delay);
-    // uint64_t start = GetTimeMs();
-    // while (GetTimeMs() - start < delay)
-    // {
-    //     // Check for ESC key
-    //     if (waitKey(WAIT_DELTA) == 27) // ESC
-    //     {
-    //         m_exit = true;
-    //     }
-
-    //     // Stop Delaying if exiting
-    //     if (m_exit)
-    //     {
-    //         return;
-    //     }
-    // }
 }
 
 uint64_t FaceDesktop::GetTimeMs() {
