@@ -7,3 +7,6 @@
 [submodule "src/VisioneREmotion/components/CppLinuxSerial"]
 	path = src/VisioneREmotion/components/CppLinuxSerial
 	url = https://github.com/gbmhunter/CppLinuxSerial.git
+[submodule "src/common_components/eventpp"]
+	path = src/common_components/eventpp
+	url = https://github.com/wqking/eventpp.git
