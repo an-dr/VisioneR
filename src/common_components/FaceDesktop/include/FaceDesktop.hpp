@@ -9,16 +9,18 @@
 
 #pragma once
 
+#include <QImage>
+#include <QPixmap>
 #include <map>
+#include <string>
 #include <opencv2/core/core.hpp>
 #include <stdint.h>
-#include <string>
+#include "Gui.hpp"
+
 #include "FaceInterface.hpp"
 
-class FaceDesktop : public FaceInterface
-{
-
-public:
+class FaceDesktop : public FaceInterface {
+ public:
     static const int WIN_SIZE_X = 500;
     static const int WIN_SIZE_Y = 256;
     static constexpr char WIN_NAME[] = "VisioneR";
@@ -31,9 +33,9 @@ public:
         {"happy", "faces/happy.png"},
         {"sad", "faces/sad.png"},
         {"dunno", "faces/dunno.png"},
-        {"confused", "faces/confused.png"} };
+        {"confused", "faces/confused.png"}};
 
-    FaceDesktop();
+    FaceDesktop(Gui &gui);
     void ShowThinking() override;
     void ShowBlink(int delay = 500) override;
     void ShowCalm(int delay = 500) override;
@@ -43,12 +45,15 @@ public:
     void ShowConfused(int delay = 500) override;
     bool IsExit();
 
-private:
-    static const int WAIT_DELTA = 100;
+ private:
+    QPixmap ToQPixmap(const cv::Mat mat);
     void Delay(int delay) override;
     uint64_t GetTimeMs();
 
-    std::map<std::string, cv::Mat> m_images;
-    bool m_exit = false;
-    int m_show_count = 0;
+    static const int WAIT_DELTA = 100;
+
+    std::map<std::string, QImage> m_images;
+    Gui *m_gui;
+    bool m_exit;
+    int m_show_count;
 };

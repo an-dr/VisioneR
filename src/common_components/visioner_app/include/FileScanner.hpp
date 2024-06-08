@@ -9,13 +9,16 @@
 
 #pragma once
 
-#include <map>
+#include <string>
 #include <vector>
-#include <opencv2/core/core.hpp>
 
-class InputInterface {
+class FileScanner {
  public:
-    InputInterface() = default;
-    virtual std::vector<cv::Mat> &GetGoodObjects() = 0;
-    virtual std::vector<cv::Mat> &GetBadObjects() = 0;
+    FileScanner(const std::string &path);
+
+    // Get all files in the directory by pattern
+    std::vector<std::string> GetFiles(const std::string &pattern);
+
+ private:
+    std::string m_path;
 };

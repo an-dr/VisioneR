@@ -10,23 +10,17 @@
 //
 // *************************************************************************
 
-#include <opencv2/highgui.hpp>
-#include "FaceInterface.hpp"
-#include "InputInterface.hpp"
 #include "AppVisioner.hpp"
+#include <opencv2/highgui.hpp>
+#include <unistd.h>
+#include "FaceInterface.hpp"
+#include "Gui.hpp"
+#include "InputInterface.hpp"
 
+AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, Gui *gui,
+                         InterfaceSceneReader *scene_input)
+    : App(face, input, gui, scene_input) {}
 
-AppVisioner::AppVisioner(FaceInterface *face, InputInterface *input, InterfaceSceneReader *scene_input)
-    : App(face, input, scene_input)
-{
-}
+void AppVisioner::Delay(int ms) { usleep(ms * 1000); }
 
-void AppVisioner::Delay(int ms)
-{
-    cv::waitKey(ms);
-}
-
-void AppVisioner::PreFindAction()
-{
-    cv::imshow("Scene", m_objectFinder.GetScene());
-}
+void AppVisioner::PreFindAction() { Show("Scene", GetScene()); }

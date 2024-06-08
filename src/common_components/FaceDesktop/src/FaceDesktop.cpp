@@ -7,107 +7,82 @@
 //
 // *************************************************************************
 #include <chrono>
-#include <stdint.h>
+#include <stdexcept>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui.hpp>
-#include <stdexcept>
+#include <stdint.h>
+#include <unistd.h>
 
 #include "FaceDesktop.hpp"
 
 using namespace cv;
 using namespace std::chrono;
 
-FaceDesktop::FaceDesktop()
-{
+FaceDesktop::FaceDesktop(Gui &gui)
+    : m_images({}), m_gui(&gui), m_exit(false), m_show_count(0) {
     // Load all images by the paths from m_img_paths
-    for (auto &img : m_img_paths)
-    {
-        m_images[img.first] = imread(img.second);
-        if (m_images[img.first].empty())
-        {
+    for (auto &img : m_img_paths) {
+        m_images[img.first] = QImage(img.second.c_str());
+        if (m_images[img.first].isNull()) {
             printf("Error: can't load image %s\n", img.second.c_str());
             throw std::runtime_error("Can't load image");
         }
     }
-
-    // Create window
-    namedWindow(WIN_NAME, WINDOW_GUI_EXPANDED);
-    ShowCalm(1);
-    resizeWindow(WIN_NAME, WIN_SIZE_X, WIN_SIZE_Y);
 }
 
-void FaceDesktop::ShowThinking()
-{
+void FaceDesktop::ShowThinking() {
     int w_time = 350;
-    imshow(WIN_NAME, m_images["thinking1"]);
+    m_gui->SetImageLeft(m_images["thinking1"]);
     Delay(w_time);
-    imshow(WIN_NAME, m_images["thinking2"]);
+    m_gui->SetImageLeft(m_images["thinking2"]);
     Delay(w_time);
-    imshow(WIN_NAME, m_images["thinking3"]);
+    m_gui->SetImageLeft(m_images["thinking3"]);
     Delay(w_time);
 }
 
-void FaceDesktop::ShowBlink(int delay)
-{
-    imshow(WIN_NAME, m_images["blink"]);
+void FaceDesktop::ShowBlink(int delay) {
+    m_gui->SetImageLeft(m_images["blink"]);
     Delay(delay);
 }
 
-void FaceDesktop::ShowCalm(int delay)
-{
-    imshow(WIN_NAME, m_images["calm"]);
+void FaceDesktop::ShowCalm(int delay) {
+    m_gui->SetImageLeft(m_images["calm"]);
     Delay(delay);
 }
 
-void FaceDesktop::ShowHappy(int delay)
-{
-    imshow(WIN_NAME, m_images["happy"]);
+void FaceDesktop::ShowHappy(int delay) {
+    m_gui->SetImageLeft(m_images["happy"]);
     Delay(delay);
 }
 
-void FaceDesktop::ShowSad(int delay)
-{
-    imshow(WIN_NAME, m_images["sad"]);
+void FaceDesktop::ShowSad(int delay) {
+    m_gui->SetImageLeft(m_images["sad"]);
     Delay(delay);
 }
 
-void FaceDesktop::ShowDunno(int delay)
-{
-    imshow(WIN_NAME, m_images["dunno"]);
+void FaceDesktop::ShowDunno(int delay) {
+    m_gui->SetImageLeft(m_images["dunno"]);
     Delay(delay);
 }
 
-void FaceDesktop::ShowConfused(int delay)
-{
-    imshow(WIN_NAME, m_images["confused"]);
+void FaceDesktop::ShowConfused(int delay) {
+    m_gui->SetImageLeft(m_images["confused"]);
     Delay(delay);
 }
 
-bool FaceDesktop::IsExit()
-{
-    return m_exit;
+bool FaceDesktop::IsExit() { return m_exit; }
+
+QPixmap FaceDesktop::ToQPixmap(const cv::Mat mat) {
+    auto img = QImage((unsigned char *)mat.data, mat.cols, mat.rows,
+                      QImage::Format_RGB888);
+    return QPixmap::fromImage(img);
 }
 
-void FaceDesktop::Delay(int delay)
-{
-    uint64_t start = GetTimeMs();
-    while (GetTimeMs() - start < delay)
-    {
-        // Check for ESC key
-        if (waitKey(WAIT_DELTA) == 27) // ESC
-        {
-            m_exit = true;
-        }
-        
-        // Stop Delaying if exiting
-        if (m_exit)
-        {
-            return;
-        }
-    }
+void FaceDesktop::Delay(int delay) {
+    usleep(1000 * delay);
 }
 
-uint64_t FaceDesktop::GetTimeMs()
-{
-    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+uint64_t FaceDesktop::GetTimeMs() {
+    return duration_cast<milliseconds>(system_clock::now().time_since_epoch())
+        .count();
 }
