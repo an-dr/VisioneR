@@ -36,30 +36,6 @@
                 ]
             },
             {
-                "name": "Debug - VisioneREmotion",
-                "type": "cppdbg",
-                "request": "launch",
-                "program": "${workspaceFolder}/install/VisioneREmotion/VisioneREmotion",
-                "miDebuggerPath": "gdb",
-                "args": [],
-                "stopAtEntry": false,
-                "cwd": "${workspaceFolder}/install/VisioneREmotion",
-                "preLaunchTask": "Install",
-                "setupCommands": [
-                    { // Display content in STL containers pretty
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ],
-                "environment": [
-                    {
-                        "name": "GTK_PATH",
-                        "value": ""
-                    }
-                ]
-            },
-            {
                 "name": "Debug - VisionerWebcam",
                 "type": "cppdbg",
                 "request": "launch",
@@ -221,9 +197,6 @@
                     },
                     {
                         "value": "VisionerWebcam",
-                    },
-                    {
-                        "value": "VisioneREmotion",
                     }
                 ]
             }
